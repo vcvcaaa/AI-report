@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-T">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRV半年吉他手養成計畫</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        .tab-button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .tab-button.active {
+            background-color: #0369a1; /* sky-700 */
+            color: white;
+        }
+        .tab-button:not(.active):hover {
+            background-color: #0ea5e9; /* sky-500 */
+            color: white;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .sub-section h3 {
+            border-bottom: 2px solid #7dd3fc; /* sky-300 */
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        th, td {
+            border: 1px solid #cbd5e1; /* slate-300 */
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        /* Responsive table */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+        h1, h2, h3, h4 {
+             font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-sky-700">🎸 半年練成Stevie Ray Vaughan風格吉他手 🎸</h1>
+            <p class="text-slate-600 mt-2">一份互動式進階計畫</p>
+        </header>
+
+        <nav class="mb-8">
+            <ul class="flex flex-wrap justify-center border-b-2 border-sky-300">
+                <li><button class="tab-button active text-sm sm:text-base py-3 px-4 sm:px-6 font-semibold rounded-t-lg focus:outline-none" onclick="showTab('intro')">前言</button></li>
+                <li><button class="tab-button text-sm sm:text-base py-3 px-4 sm:px-6 font-semibold rounded-t-lg focus:outline-none" onclick="showTab('phase1')">階段一 (1-2月)</button></li>
+                <li><button class="tab-button text-sm sm:text-base py-3 px-4 sm:px-6 font-semibold rounded-t-lg focus:outline-none" onclick="showTab('phase2')">階段二 (3-4月)</button></li>
+                <li><button class="tab-button text-sm sm:text-base py-3 px-4 sm:px-6 font-semibold rounded-t-lg focus:outline-none" onclick="showTab('phase3')">階段三 (5-6月)</button></li>
+                <li><button class="tab-button text-sm sm:text-base py-3 px-4 sm:px-6 font-semibold rounded-t-lg focus:outline-none" onclick="showTab('conclusion')">結論</button></li>
+            </ul>
+        </nav>
+
+        <main>
+            <section id="intro" class="content-section active bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-sky-700 mb-4">前言</h2>
+                <p class="mb-4">有志在短短六個月內掌握Stevie Ray Vaughan (SRV) 的吉他風格，是一項極具挑戰性且令人欽佩的目標。SRV不僅是一位技巧精湛的吉他手，更是一位情感豐富、風格獨特的音樂家，他的演奏融合了德州藍調的粗獷、搖滾的能量以及爵士的細膩。本計畫旨在提供一個為期六個月的密集訓練計畫，引導有一定基礎的吉他手逐步深入SRV的音樂世界。</p>
+                <p>必須強調的是，六個月的時間足以打下堅實的SRV風格基礎，但要真正達到大師級的境界，則需要長年累月的浸淫與個人感悟。本計畫將系統性地剖析SRV的標誌性技巧、音色塑造、經典曲目以及其音樂的靈魂——情感表達。透過階段性的學習與刻意練習，學習者將能逐步掌握SRV風格的核心要素。</p>
+                 <p class="mt-4 text-sm text-slate-500">請點擊上方頁籤開始您的SRV風格吉他之旅！</p>
+            </section>
+
+            <section id="phase1" class="content-section bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-sky-700 mb-4">第一階段 (第1-2個月)：奠定SRV基礎 – 音色、技巧與德州Shuffle</h2>
+                <p class="mb-6 text-slate-600">此階段的目標是建立對SRV音色和基本技巧的初步理解，並掌握其標誌性的德州Shuffle節奏。</p>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">A. 核心裝備：打造SRV的音色調色盤 🔊</h3>
+                    <p>SRV的音色是他風格中不可或缺的一環，其獨特的聲音源於他對特定器材的選擇與調校。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>吉他</strong>：Fender Stratocaster是SRV的標誌性武器，尤其是他那把著名的「Number One」，一把1963年的Strat。其單線圈拾音器提供了明亮且富有動態的音色。對於初學者而言，Squier Classic Vibe系列的Stratocaster因其「SRV般的清晰度」而備受讚譽，是一個不錯的起點。</li>
+                        <li><strong>琴弦</strong>：SRV以使用極粗規格的琴弦著稱，通常是0.013-0.058，有時是0.011-0.052。重型琴弦能提供更飽滿的音色和更好的延音，但也對手指力量要求極高。建議初學者可以從0.010或0.011規格開始，逐步適應。SRV通常會將吉他降半音調弦 (Eb Ab Db Gb Bb Eb)，這能使琴弦手感更柔和，音色更深沉。</li>
+                        <li><strong>音箱</strong>：Fender音箱是SRV的首選，特別是Fender Vibroverb和Super Reverb。這些音箱以其乾淨的音色著稱，即使在高音量下也能保持清晰度。SRV也曾使用過極為罕見且昂貴的Dumble Steel String Singer音箱。他經常將音箱音量開到7-8分，以獲得自然的過載音色，典型的EQ設定可能是Bass: 7, Mids: 8, Treble: 5–6。</li>
+                        <li><strong>效果器</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>Ibanez Tube Screamer (TS-808/TS-9)</strong>：這是SRV音色中至關重要的過載效果器。他通常將Level旋鈕調高 (接近或全開)，Drive旋鈕調低 (接近或全關)，作為「乾淨」的音量推動，並利用其獨特的中低頻增強效果。典型設定為Drive: 9點鐘方向, Level: 2點鐘方向, Tone: 12點鐘方向，或Drive: 2-3, Tone: 3-5, Level: 9-10。</li>
+                                <li><strong>Wah Pedal (哇音踏板)</strong>：如Vox V846或Dunlop Cry Baby，用於富有表情的獨奏，例如在歌曲《Say What》中。SRV在使用哇音時，通常也會同時開啟Tube Screamer。</li>
+                                <li><strong>其他</strong>：Rotary效果 (如Fender Vibratone，用於《Cold Shot》的旋轉音效)、Octave/Fuzz效果 (如Roger Mayer Octavia，用於《Little Wing》的音色)。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <h4 class="text-lg font-semibold mt-4 mb-2 text-sky-600">表1：SRV基礎裝備建議</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>裝備類型</th>
+                                    <th>SRV常用選擇</th>
+                                    <th>關鍵特性</th>
+                                    <th>預算型建議</th>
+                                    <th>中階建議</th>
+                                    <th>高階/致敬型建議</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>吉他</strong></td>
+                                    <td>Fender Stratocaster (Number One - '63 Strat)</td>
+                                    <td>單線圈拾音器、玫瑰木指板 (Number One)</td>
+                                    <td>Squier Classic Vibe Stratocaster</td>
+                                    <td>Fender Player Series Stratocaster</td>
+                                    <td>Fender American Vintage II / Custom Shop SRV Strat</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>琴弦</strong></td>
+                                    <td>重規格 (.013-.058 或.011-.052)</td>
+                                    <td>飽滿音色、長延音、降半音調弦 (Eb)</td>
+                                    <td>D'Addario EXL110 (.010-.046)</td>
+                                    <td>D'Addario NYXL (.011-.052)</td>
+                                    <td>GHS Stevie Ray Vaughan Signature Strings (.013-.058)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>音箱</strong></td>
+                                    <td>Fender Vibroverb, Super Reverb; Dumble SSS</td>
+                                    <td>清澈大聲、自然過載</td>
+                                    <td>Fender Blues Junior</td>
+                                    <td>Fender '65 Deluxe Reverb / Super Reverb Reissue</td>
+                                    <td>Vintage Fender Amps / Two-Rock Studio Signature</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>效果器</strong></td>
+                                    <td>Ibanez TS-808/TS-9, Vox Wah</td>
+                                    <td>中頻突出過載、表情豐富哇音</td>
+                                    <td>Mooer Green Mile (TS clone), Joyo Wah</td>
+                                    <td>Ibanez TS9 Reissue, Dunlop Cry Baby GCB95</td>
+                                    <td>Ibanez TS808 Reissue, Vox V846-HW Wah</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="mt-2">吉他的設定至關重要，尤其是使用重型琴弦時。需要調整琴頸曲度 (truss rod) 和弦枕，以避免打弦。SRV偏好略高的弦距 (action)，約在第12品格處2–2.5mm，這有助於清晰的推弦並防止打弦。建議尋求專業技師進行設定。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">B. SRV的握持與撥弦：力量與動態 💪</h3>
+                    <p>SRV的演奏充滿力量感，這與他獨特的握持和撥弦方式密切相關。</p>
+                     <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>強勁的握持 (Hard Grip)</strong>：無論是左手按弦還是右手撥弦，SRV都傾向於使用較大的力度。左手用力按弦，右手則在需要時猛力撥弦。這並非意味著缺乏細膩，而是在需要爆發力時能毫不猶豫地施展。</li>
+                        <li><strong>侵略性的撥弦 (Aggressive Pick Attack)</strong>：SRV常使用Fender Medium撥片，並以撥片較窄的一端進行撥弦，製造出尖銳清晰的音符。他能以極大的侵略性擊打琴弦，也能輕柔地撥弦，展現寬廣的動態範圍。</li>
+                        <li><strong>左手悶音技巧 (Left-Hand Muting)</strong>：這是SRV演奏中極為關鍵的一環。為了在猛力撥弦時只讓目標音符發聲，避免不必要的雜音，必須掌握精湛的左手悶音。通常用拇指悶住低音E、A、D三根弦，同時用按弦手指的前端或指背輕觸並悶住高音E、B弦。這使得他即使猛烈掃過所有琴弦，也只有目標音符清晰響亮。</li>
+                    </ul>
+                    <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">練習建議：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li>練習以不同的力度撥弦，從極輕到極重，感受音量和音色的變化。</li>
+                        <li>針對左手悶音進行專項練習：選擇一個音符，例如G弦上的D音，嘗試用拇指悶住低音三弦，按弦手指悶住高音兩弦，然後用力掃過所有六根弦，確保只有G弦上的D音發出清晰的聲音。</li>
+                    </ul>
+                    <p class="mt-3">掌握這些基礎技巧是後續學習SRV複雜樂句和情感表達的基石。左手悶音的熟練尤其重要，它賦予了SRV演奏中特有的衝擊力和清晰度，即使在高速演奏和激烈的情感宣洩中，每個音符依然乾淨利落。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">C. 掌握德州Shuffle：節奏與律動 🎶</h3>
+                    <p>德州Shuffle是SRV音樂風格的標誌性節奏型態，充滿了搖擺和驅動力。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>核心特徵</strong>：以歌曲《Pride And Joy》為典型代表，其特點是強勁的Shuffle節奏、尖銳的撥弦技巧、雙音 (double stops) 和悶音riff的運用。這種節奏能為演奏注入活力和律動感。</li>
+                        <li><strong>技巧構成</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>強勁的Shuffle節奏</strong>：通常由貝斯和鼓奠定基礎，吉他在此之上演奏富有彈性的切分節奏。</li>
+                                <li><strong>悶音Riff (Muted Riffs)</strong>：結合左手悶音技巧，在Shuffle節奏中加入短促、有力的悶音Riff，增加節奏的顆粒感和驅動力。</li>
+                                <li><strong>雙音 (Double Stops)</strong>：在節奏中穿插雙音，通常是三度或四度和弦的片段，增加和聲的厚度和色彩。</li>
+                                <li><strong>上撥技巧 (Up-picked/Up-strum)</strong>：在《Pride And Joy》的引子部分，SRV使用了大量的上撥。在演唱段落中，他也常使用上撥彈奏。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                     <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">學習資源與曲目：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li>Guitar Club的SRV課程中，「The Texas Shuffle」單元專門講解SRV侵略性且強烈的節奏演奏。</li>
+                        <li>LickLibrary的課程中，學習《Pride And Joy》有助於掌握其充滿活力的Shuffle節奏和尖銳的撥弦技巧。</li>
+                        <li>建議從《Pride And Joy》入手，仔細聆聽並模仿其Shuffle的感覺和吉他Riff。</li>
+                    </ul>
+                    <p class="mt-3">德州Shuffle不僅僅是一種節奏型態，更是一種感覺。學習者需要透過大量聆聽和練習，內化這種特有的律動，才能真正抓住其精髓。這種節奏的掌握，對於後續學習SRV的即興演奏和歌曲詮釋至關重要，因為它構成了SRV音樂的骨架。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">D. 基礎樂句與藍調音階：建立詞彙庫 📖</h3>
+                    <p>SRV的演奏植根於藍調，其樂句大量運用了幾種核心的藍調音階。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>核心音階</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>小調五聲音階 (Minor Pentatonic Scale)</strong>：這是藍調的基石，SRV在此基礎上進行了大量的變化和擴展。例如Am五聲音階的樂句是探索SRV標誌性樂句的理想起點。</li>
+                                <li><strong>藍調音階 (Blues Scale)</strong>：即在小調五聲音階的基礎上增加一個降五音 (b5)，這個「藍調音符」(blue note) 賦予了音階特有的憂鬱和張力。SRV經常運用E小調藍調音階。</li>
+                                <li><strong>大調五聲音階 (Major Pentatonic Scale)</strong>：與小調五聲音階相對，常用於製造更明亮、甜美的感覺，SRV也常將其與小調五聲音階混合使用，創造豐富的色彩變化。</li>
+                            </ul>
+                        </li>
+                        <li><strong>基礎樂句學習</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li>從SRV較為簡單的歌曲中學習標誌性樂句，如《Pride And Joy》中的填充樂句、《Cold Shot》中的樂句。</li>
+                                <li>《Crossfire》中人聲間隙的主奏吉他樂句，是藍調主奏吉他的極佳入門教材，這些樂句在SRV的曲目中反覆出現。</li>
+                                <li>許多教學資源，如LickLibrary的「Learn To Play Stevie Ray Vaughan Guitar Techniques」和Hal Leonard出版的《Play like Stevie Ray Vaughan》，都包含了SRV的標誌性樂句教學。</li>
+                            </ul>
+                        </li>
+                        <li><strong>技巧整合</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>Albert King的影響</strong>：SRV深受Albert King影響，學習一些Albert King的技巧和樂句對理解SRV風格大有裨益。Albert King常用的「Box」型指法，即小調五聲音階第二型的頂部五個音，是SRV常用的區域。</li>
+                                <li><strong>樂句擴展</strong>：SRV以其包含大量音符的擴展樂句而聞名，常見做法是將樂句在指板上對角線擴展。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="mt-3">此階段的重點是熟悉這些核心音階在指板上的位置，並開始積累SRV風格的基礎樂句。這不僅是技巧的學習，更是對藍調「語言」的初步掌握。透過模仿和練習這些樂句，學習者能開始理解SRV是如何運用這些音階來講述音樂故事的。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">E. 聽力訓練 I：聆聽藍調的聲音 🎧</h3>
+                    <p>精湛的聽力是成為優秀藍調吉他手的關鍵，對於學習SRV風格更是如此。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>廣泛聆聽SRV的音樂</strong>：這是理解其風格最直接的方式。仔細聆聽他的選時 (timing)、音符選擇、動態變化以及情感的投入。</li>
+                        <li><strong>追溯SRV的影響來源</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>Albert King</strong>：SRV最重要的導師之一，其推弦和樂句風格對SRV影響深遠。可以聆聽《Born Under A Bad Sign》、《Blues at Sunrise》等作品。</li>
+                                <li><strong>Jimi Hendrix</strong>：另一位對SRV有重大影響的吉他手，SRV翻彈過他的《Little Wing》和《Voodoo Child (Slight Return)》。聆聽Hendrix的作品如《Red House》有助於理解SRV風格中的搖滾元素。</li>
+                                <li><strong>其他藍調大師</strong>：Buddy Guy (SRV翻彈過《Mary Had A Little Lamb》), Albert Collins, Freddie King, Muddy Waters, B.B. King 等。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">聽力練習建議：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>旋律聽寫</strong>：嘗試聽出SRV或其影響者演奏的簡單藍調樂句，並在吉他上找到它們。從單個音符開始，逐漸過渡到短樂句。</li>
+                        <li><strong>音程識別</strong>：練習識別基本的音程（如大三度、小三度、純五度），這對理解和弦構成和旋律走向至關重要。TrueFire的「Blues Soloing Handbook」課程中包含五聲音階與聽力訓練的內容。</li>
+                        <li><strong>節奏感模仿</strong>：不僅要聽音高，還要仔細聆聽節奏的細微變化，如SRV的「floating rhythm」(浮動節奏) 或Shuffle節奏中的細節。</li>
+                        <li><strong>專注於樂句</strong>：Riffhard建議，與其盲目練習音階，不如專注於樂句，像對話一樣思考獨奏，注意停頓和動態。</li>
+                    </ul>
+                    <p class="mt-3">這個階段的聽力訓練，目標是培養對藍調音樂的敏感度，不僅僅是辨識音符，更重要的是理解音符背後的情感和律動。良好的聽力能讓學習者更快地吸收SRV的音樂語言，並為之後的即興演奏打下堅實基礎。當耳朵能準確捕捉到藍調的細微之處時，手指才能更忠實地將其再現。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">F. 初期曲目：學習你的第一批SRV作品 🎼</h3>
+                    <p>在掌握了基本的音色概念、核心技巧和聽力基礎後，便可以開始學習SRV的完整曲目。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>選曲原則</strong>：選擇相對容易上手、能體現SRV早期風格或核心技巧的曲目。</li>
+                        <li><strong>建議曲目</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>《Pride and Joy》</strong>：經典的德州Shuffle，包含了SRV標誌性的節奏Riff和基礎藍調樂句。論壇用戶認為這首歌的進行本身不難，可以即興填充。</li>
+                                <li><strong>《Cold Shot》</strong>：節奏相對簡單，是學習SRV風格推弦、悶音和動態控制的好材料。LickLibrary課程將此曲作為教授動態和發音技巧的範例。</li>
+                                <li><strong>《Mary Had A Little Lamb》</strong>：Buddy Guy的原曲，SRV的版本也相對容易掌握，適合練習基礎藍調演奏。</li>
+                                <li><strong>《Life By The Drop》</strong>：SRV罕見的木吉他作品，雖然使用12弦吉他演奏，但和弦進行 (A, E, F#m, D) 和Am藍調音階的運用相對直接，是學習SRV式藍調節奏和樂句的好選擇。</li>
+                                <li><strong>《The House is Rockin'》</strong>：一首風格直接的公路酒吧藍調，相對容易演奏。</li>
+                            </ul>
+                        </li>
+                        <li><strong>學習資源</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>線上課程</strong>：Guitar Club 和 LickLibrary 均提供SRV曲目和技巧的詳細教學，包含影片、譜例和背景音軌。</li>
+                                <li><strong>教學書籍/DVD</strong>：Hal Leonard出版的《Play like Stevie Ray Vaughan》包含15首SRV經典歌曲的教學，附帶線上音頻。Guitar Play-Along系列也有SRV的曲目教學。</li>
+                                <li><strong>論壇與社群</strong>：Reddit的r/Guitar等社群常有關於學習SRV歌曲的討論和建議。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                     <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">學習方法：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>逐段學習</strong>：將歌曲分解成引子、主歌、副歌、獨奏等段落，逐一攻克。</li>
+                        <li><strong>慢速練習</strong>：使用節拍器從慢速開始練習，確保每個音符的準確性和時值的穩定性。</li>
+                        <li><strong>模仿原聲</strong>：仔細聆聽SRV的原版錄音，盡力模仿他的音準、節奏感、動態和情感。初期逐音符學習獨奏有助於建立樂句庫和對其風格的理解。</li>
+                        <li><strong>利用背景音軌</strong>：許多教學資源提供去除吉他聲部的背景音軌，供學習者跟練。</li>
+                    </ul>
+                    <p class="mt-3">初期曲目的學習不僅是技巧的鞏固，更是將前面所學的音色、撥弦、悶音、音階等知識點應用於實際演奏的過程。透過完整曲目的練習，學習者能更深刻地理解SRV是如何將各種元素融合成他獨特的音樂風格。</p>
+                </div>
+            </section>
+
+            <section id="phase2" class="content-section bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-sky-700 mb-4">第二階段 (第3-4個月)：深化藍調理解 – 推弦、顫音與早期即興</h2>
+                <p class="mb-6 text-slate-600">此階段專注於SRV更具表現力的技巧，如靈魂般的推弦、標誌性的顫音，並開始探索即興演奏的奧秘。</p>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">A. Albert King的連結：充滿靈魂的推弦與樂句 ✨</h3>
+                    <p>Albert King對SRV的影響至關重要，尤其是在推弦技巧和樂句風格方面。SRV的演奏中充滿了Albert King式的推弦，那種深情而略帶哭腔的音色，成為他個人風格的重要組成部分。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>Albert King的影響</strong>：SRV從Albert King那裡學到了許多標誌性的推弦技巧和樂句。Albert King以其極具侵略性的推弦風格著稱。SRV在早期就與Albert King相識並同台演出，深受其薰陶。</li>
+                        <li><strong>「Albert King Box」</strong>：這是Albert King常用的演奏區域，位於小調五聲音階第二型的頂部，由五個音符構成。這個區域非常適合進行推弦，能夠輕易地推到小調五聲、大調五聲乃至藍調音階中的目標音符。SRV經常在這個「盒子」裡創造出豐富的樂句。</li>
+                        <li><strong>推弦技巧</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>多指輔助推弦</strong>：為了更好地控制琴弦並獲得足夠的力量，SRV通常使用無名指、中指甚至食指共同完成推弦動作。</li>
+                                <li><strong>推弦結合顫音 (Vibrato)</strong>：在推弦達到目標音高後，立即施加中等寬度的顫音，同時持續撥弦，使吉他發出如泣如訴的聲音。這是SRV演奏中最具情感張力的技巧之一。</li>
+                                <li><strong>推弦的準確性</strong>：精準地推到目標音高是至關重要的。練習時應仔細聆聽，確保推弦音準。</li>
+                            </ul>
+                        </li>
+                        <li><strong>相關曲目與樂句</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li>SRV翻唱Larry Davis的《Texas Flood》，其演奏風格深受Albert King影響。LickLibrary的課程中，《Texas Flood》的教學就強調了透過推弦和顫音來傳達情感。</li>
+                                <li>Albert King的《Born Under A Bad Sign》和與SRV合作的專輯《In Session》中的《Blues at Sunrise》等曲目，都是理解其風格的絕佳素材。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                     <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">練習重點：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li>練習在「Albert King Box」內進行各種推弦，包括半音、全音甚至更大幅度的推弦。</li>
+                        <li>重點練習推弦後立即加入顫音的技巧。</li>
+                        <li>學習Albert King和SRV在該區域的經典樂句，分析其推弦的運用方式。</li>
+                    </ul>
+                    <p class="mt-3">深入理解Albert King對SRV的影響，有助於學習者掌握SRV風格中那種獨特的、充滿張力的推弦語彙。這不僅是技巧的模仿，更是對藍調情感表達方式的深層次領悟。當學習者能夠自如地運用這些推弦技巧時，其演奏將更具SRV的「味道」。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">B. SRV的節奏細微之處：Rubato與浮動節奏 🌊</h3>
+                    <p>SRV的節奏感極具特色，他並非總是嚴格遵循節拍器的精準，而是在節奏中展現出一種「浮動」的自由感，即所謂的「Rubato」。</p>
+                     <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>Rubato (浮動節奏)</strong>：這是一種在演奏中對時值進行彈性處理的技巧，演奏者可以根據樂句的情感需要，略微加快或放慢速度，而伴奏部分則保持相對穩定的節奏。SRV經常在他的演奏中使用這種「浮動節奏」，賦予樂句呼吸感和即興的意味。</li>
+                        <li><strong>「德州三連音」(Texas Triplet)</strong>：這是SRV常用的一種富有特色的三連音節奏，尤其體現在《Life By The Drop》的引子樂句中。這種三連音的運用，為他的藍調演奏增添了獨特的律動感。</li>
+                    </ul>
+                    <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">學習與練習：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>仔細聆聽</strong>：掌握Rubato的最好方法是反覆聆聽SRV的錄音，感受他如何處理樂句的時值和呼吸。教學資源中常建議，由於Rubato的變化多端，譜例往往不標註詳細的節奏，鼓勵學習者從聆聽中捕捉其感覺。</li>
+                        <li><strong>模仿與感受</strong>：選擇SRV的一些標誌性樂句，嘗試模仿他的節奏處理。不要僅僅關注音符的準確，更要體會樂句的「鬆緊」變化。</li>
+                        <li><strong>「Stevie Ray Vaughan’s Secret Sauce」</strong>：這是一種與浮動節奏相關的悶音技巧。在演奏Shuffle節奏時，SRV會在每個八分音符撥弦之間進行悶音，這種悶音由撥弦手和按弦手協同完成，撥弦手的手指在撥弦後回到琴弦上進行短暫的休止。這種技巧賦予節奏呼吸感和搖擺感，是其「秘密武器」之一。</li>
+                        <li><strong>練習德州三連音</strong>：可以找到《Life By The Drop》的譜例或教學，專門練習其引子中的三連音節奏型，並嘗試將其運用到其他藍調樂句中。</li>
+                    </ul>
+                    <p class="mt-3"><strong>與背景音樂的配合</strong>：雖然主奏吉他可以有Rubato的處理，但通常背景的節奏組（鼓、貝斯）會保持相對穩定的律動。理解這種前景與背景之間的微妙互動，是掌握SRV式Rubato的關鍵。</p>
+                    <p class="mt-2">SRV的節奏並非一成不變，而是充滿了生命力。學習他的Rubato和獨特的三連音用法，能讓演奏擺脫僵硬，更具歌唱性和感染力。這需要敏銳的聽覺和對藍調音樂律動的深刻理解，是從「彈對音符」到「彈出味道」的進階。</p>
+                </div>
+                
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">C. 表現力技巧：顫音、掃弦與動態控制 🎤</h3>
+                    <p>除了推弦和節奏感，SRV還運用了一系列技巧來增強其演奏的表現力，使每個音符都充滿情感。</p>
+                     <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>寬而快的顫音 (Wide and Fast Vibrato)</strong>：這是SRV標誌性的技巧之一。他的顫音幅度較寬，速度較快，為音符增添了強烈的「刺痛感」和靈魂深度。這種顫音不僅用於延音，也常與推弦結合使用。練習時應專注於使用手腕而非僅僅手指來產生平滑、均勻的顫音。</li>
+                        <li><strong>掃弦/刮弦 (Rakes)</strong>：SRV經常在彈奏目標音符前，用撥片快速掃過被悶音的琴弦，產生一種帶有敲擊感的「刮弦」聲，然後清晰地彈出目標音符。這種技巧為他的獨奏增添了打擊樂般的元素和動態感。Guitar Masterclass的課程中提到，SRV的「raking」技巧需要左手精準的悶音配合。</li>
+                        <li><strong>動態控制 (Dynamics)</strong>：SRV是動態控制的大師。他能用撥弦手精確控制音量和強度，從極輕柔微妙到極響亮粗獷，遊刃有餘。
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>練習方法</strong>：練習用不同的力度演奏同一個樂句，感受音量和情感的變化。</li>
+                                <li><strong>「鬼音」(Ghost Notes)</strong>：這些是帶有打擊樂感的悶音音符，SRV常用它們來填充樂句之間的空隙，使獨奏更具流動性和對話感。</li>
+                            </ul>
+                        </li>
+                        <li><strong>雙音 (Double Stops) 和同音推弦 (Unison Bends)</strong>：這些技巧本身就具有強烈的表現力。雙音是同時演奏兩個音符，常結合推弦和滑音，創造出類似人聲的效果。同音推弦則是在一條弦上推弦，使其音高與另一條弦上已彈響的音符相同，產生強烈的共鳴效果。這些技巧能為獨奏增添張力和色彩。</li>
+                        <li><strong>情感投入</strong>：SRV將原始的情感傾注到每一個音符中。LickLibrary的課程強調，學習SRV的技巧不僅是彈奏音符，更是透過音樂傳達故事和情感。</li>
+                    </ul>
+                    <p class="mt-3">這些表現力技巧是SRV音樂情感傳達的重要載體。它們使得SRV的演奏不僅僅是音符的組合，更是情感的流露。學習者需要反覆練習，將這些技巧內化，並學會在演奏中根據音樂的情緒自然地運用它們。這要求不僅僅是手指的靈活，更是對音樂情感的細膩感知和表達能力的培養。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">D. 擴展曲目：挑戰更複雜的作品 🚀</h3>
+                    <p>在掌握了更多表現力技巧後，可以開始挑戰SRV曲庫中更具複雜性和代表性的作品。</p>
+                     <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>選曲方向</strong>：選擇那些能充分展現SRV推弦、顫音、動態控制、Shuffle節奏以及其標誌性樂句運用的曲目。</li>
+                        <li><strong>建議曲目</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>《Texas Flood》</strong> (原唱Larry Davis，SRV版)：這首慢板藍調是展現SRV充滿情感的推弦、寬廣顫音和動態控制的絕佳範例。LickLibrary課程將其作為教授情感表達的重點曲目。</li>
+                                <li><strong>《Scuttle Buttin'》</strong>：一首快節奏的器樂曲，深受Lonnie Mack影響，對撥弦速度、精準度和左手悶音有較高要求。LickLibrary課程用此曲教授快速Riffing和混合撥弦 (Hybrid Picking)。</li>
+                                <li><strong>《The Sky Is Crying》</strong> (原唱Elmore James，SRV版參考Albert King)：另一首經典慢板藍調，充滿了SRV標誌性的悲傷推弦和強烈顫音，以及細膩的琶音運用。</li>
+                                <li><strong>《Couldn't Stand the Weather》</strong>：同名專輯主打歌，展現了SRV在標準12小節藍調之外的創作能力，節奏和樂句都頗具特色。</li>
+                                <li><strong>《Crossfire》</strong>：這首歌中的吉他Riff和獨奏樂句非常經典，對推弦力量的鍛鍊很有幫助。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                     <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">學習重點：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>深入分析</strong>：不僅僅是學習音符，更要分析歌曲的結構、和聲進行、SRV在獨奏中的樂句構建方式、以及他如何運用各種技巧來服務於歌曲的情感表達。</li>
+                        <li><strong>技巧整合</strong>：這些曲目往往需要綜合運用之前學到的所有技巧，如強勁的撥弦、精準的悶音、富有歌唱性的推弦和顫音、以及對Shuffle或慢板藍調節奏的把握。</li>
+                        <li><strong>音色模仿</strong>：嘗試調整自己的設備，盡可能接近SRV在這些錄音中的音色。例如，Guitar Club的SRV課程設有專門的「Getting The Tone」單元。</li>
+                    </ul>
+                    <p class="mt-3"><strong>耐心與毅力</strong>：這些曲目通常比第一階段的曲目更長、技巧更複雜，需要投入更多的時間和耐心進行分解練習和整體演練。</p>
+                    <p class="mt-2">挑戰這些更複雜的曲目，是將所學技巧融會貫通的過程。每一首作品都是一個小型的「SRV風格研討會」，透過深入學習，不僅能提升演奏水平，更能加深對SRV音樂內涵的理解。這個過程可能會遇到困難，但克服它們所帶來的進步和成就感將是巨大的。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">E. 聽力訓練 II：推弦、顫音與樂句細微差別的辨識 🧐</h3>
+                    <p>隨著技巧的深入，聽力訓練也需要進入更精細的層面，專注於辨識SRV演奏中那些賦予其獨特風格的細微差別。</p>
+                     <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>精準辨識推弦音高</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>練習內容</strong>：聆聽SRV的推弦，準確判斷他是推了半音、全音，還是一又四分之一音或一又二分之一音。許多藍調吉他手，包括SRV，其推弦並非總是精確的半音或全音，有時會帶有微小的音高變化以增強表現力。</li>
+                                <li><strong>練習方法</strong>：選擇SRV的經典獨奏片段，逐個分析其中的推弦。嘗試在吉他上模仿，並用調音器或耳朵仔細比對音高。TrueFire的「Blues Soloing Handbook」課程中有關於推弦準確性的練習。</li>
+                            </ul>
+                        </li>
+                        <li><strong>感知顫音的特性</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>練習內容</strong>：辨識SRV顫音的寬度（幅度大小）和速度。他是使用窄而快的顫音，還是寬而慢的顫音，或如常見描述的寬而快的顫音？他在不同樂句和情感表達時，顫音是否有所變化？</li>
+                                <li><strong>練習方法</strong>：聆聽SRV演奏的延音音符，專注於顫音的細節。嘗試用不同的手腕動作和手指力度在吉他上模仿不同風格的顫音。</li>
+                            </ul>
+                        </li>
+                        <li><strong>捕捉樂句的發音與時值 (Articulation and Timing)</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>練習內容</strong>：SRV的樂句充滿了細微的發音變化，如頓挫、連奏、滑音、擊弦、勾弦等。同時，他對時值的掌控也極具個人特色，包括前面提到的Rubato。</li>
+                                <li><strong>練習方法</strong>：放慢SRV的錄音（可使用軟體輔助），仔細聆聽每個音符是如何被彈奏出來的。注意音符之間的連接方式，以及樂句的整體「呼吸感」。</li>
+                            </ul>
+                        </li>
+                        <li><strong>人聲化樂句練習 (Vocal-like Phrasing)</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>練習內容</strong>：SRV的吉他演奏常被形容為極具歌唱性。嘗試將他的吉他樂句「唱」出來，感受其旋律的起伏和情感的流動。</li>
+                                <li><strong>練習方法</strong>：選擇一段SRV的吉他獨奏，先嘗試用自己的聲音哼唱，然後再用吉他彈奏。這有助於更好地理解樂句的內在邏輯和情感走向。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="mt-3"><strong>利用工具輔助</strong>：可以使用一些具有慢放、循環播放功能的音樂播放軟體或App，幫助仔細分析SRV的演奏細節。</p>
+                    <p class="mt-2">第二階段的聽力訓練，目標是從宏觀的風格感知深入到微觀的細節辨識。這種精細化的聽力能讓學習者更準確地捕捉和複製SRV演奏的精髓，而不僅僅是音符的表面。這對於後續的即興演奏和形成個人風格都至關重要，因為只有聽得出細微差別，才能在自己的演奏中做出有意識的選擇和控制。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">F. 即興演奏入門：說藍調的語言 🗣️</h3>
+                    <p>在積累了一定的SRV風格詞彙（樂句、技巧、節奏感）和提升了聽力之後，便可以開始探索即興演奏。即興是藍調音樂的核心，也是SRV展現其才華的重要舞台。</p>
+                     <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>核心概念</strong>：即興演奏並非隨意彈奏，而是在一定的框架（如12小節藍調進行）和音階（如藍調音階、五聲音階）基礎上，運用所學的樂句和技巧進行創造性的表達。SRV的即興充滿了情感張力和故事性。</li>
+                    </ul>
+                    <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">練習方法：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>從簡單開始</strong>：使用12小節藍調背景音軌進行練習。初期可以限定自己只使用小調五聲音階，然後逐漸加入藍調音階的b5音。</li>
+                        <li><strong>運用所學樂句</strong>：將之前學到的SRV風格樂句作為即興的起點和素材。嘗試將這些樂句進行變化、組合，或在不同的和弦背景下使用。</li>
+                        <li><strong>「少即是多」(Less is More)</strong>：藍調即興不追求音符的堆砌，而是注重樂句的歌唱性和情感的傳達。B.B. King以其簡潔而充滿張力的樂句著稱，SRV也深諳此道。</li>
+                        <li><strong>樂句的呼吸與停頓 (Phrasing and Space)</strong>：將獨奏視為一場對話，樂句之間需要有停頓和呼吸，就像說話一樣。SRV的演奏中，空間的運用和音符本身一樣重要。</li>
+                        <li><strong>「呼喚與回應」(Call and Response)</strong>：這是藍調中常見的樂句組織方式。可以是一個樂句作為「呼喚」，緊接著另一個樂句作為「回應」。練習與背景音樂或其他樂手進行「呼喚與回應」式的即興。</li>
+                        <li><strong>模仿與轉化</strong>：聆聽SRV的即興獨奏，嘗試聽出其中的片段並在自己的演奏中模仿。重點不在於一模一樣地複製，而是理解其樂句的構建方式和情感走向，然後轉化成自己的語言。</li>
+                        <li><strong>錄下自己的即興</strong>：定期錄下自己的即興演奏並進行回聽和分析，找出優點和需要改進的地方。</li>
+                    </ul>
+                    <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">心態調整：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>不要怕犯錯</strong>：即興是一個探索的過程，犯錯是難免的。關鍵是從錯誤中學習。</li>
+                        <li><strong>專注於情感表達</strong>：即使技巧尚不完美，也要努力將情感注入到演奏中。</li>
+                    </ul>
+                    <p class="mt-3">即興演奏是將所學知識融會貫通並進行創造性輸出的過程。對於SRV風格而言，其即興不僅僅是音階的跑動，更是充滿了力量、激情和細膩情感的音樂敘事。初期的即興練習，目標是能夠在藍調的框架內，運用SRV的「詞彙」流暢地「說話」。隨著練習的深入，學習者將逐漸能夠更自由地表達自己，並開始形成帶有SRV烙印的個人即興風格。</p>
+                </div>
+            </section>
+
+            <section id="phase3" class="content-section bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-sky-700 mb-4">第三階段 (第5-6個月)：整合與發聲 – 尋找你受SRV啟發的聲音</h2>
+                <p class="mb-6 text-slate-600">此階段是將前四個月所學融會貫通，深入探索SRV更廣泛的影響，並開始塑造個人風格的關鍵時期。</p>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">A. Hendrix的維度：增添光彩與音色探索 🌌</h3>
+                    <p>Jimi Hendrix是SRV音樂基因中的另一重要組成部分，其影響在SRV的某些翻唱作品和更具實驗性的音色中尤為明顯。</p>
+                     <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>Hendrix對SRV的影響</strong>：SRV深受Hendrix的影響，這不僅體現在他對Hendrix作品的翻唱，也體現在他演奏中的一些迷幻色彩和搖滾張力。</li>
+                        <li><strong>關鍵的Hendrix/SRV元素</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>翻唱作品</strong>：SRV經常在現場演奏Hendrix的《Little Wing》和《Voodoo Child (Slight Return)》。學習SRV演繹這些作品的方式，可以直觀感受Hendrix的影響。</li>
+                                <li><strong>效果器的運用</strong>：相較於SRV在多數德州藍調作品中對效果器的謹慎使用，他在演奏《Voodoo Child》等曲目時，會更明顯地使用哇音踏板，這點與Hendrix的風格相呼應。Hendrix以大量使用Fuzz、Octavia等效果器著稱。</li>
+                                <li><strong>和弦裝飾與節奏主奏合一</strong>：Hendrix開創了在演奏節奏的同時，巧妙融入主奏樂句和和弦裝飾的風格，SRV也吸收了這一點，使他的伴奏部分同樣充滿了音樂性。</li>
+                                <li><strong>抒情慢板作品</strong>：SRV的一些器樂作品，如《Lenny》和《Riviera Paradise》，其旋律的歌唱性和氛圍的營造，被認為受到了Hendrix抒情風格的啟發。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                     <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">練習建議：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>學習SRV的Hendrix翻唱</strong>：重點分析SRV在《Little Wing》和《Voodoo Child (Slight Return)》中的演奏，注意他如何保留原作精髓，同時融入自己的風格。</li>
+                        <li><strong>探索效果器</strong>：嘗試在演奏中加入哇音，學習Hendrix式的哇音樂句。可以小範圍嘗試Fuzz或Octavia效果，理解它們如何改變音色。</li>
+                        <li><strong>練習Hendrix式的和弦裝飾</strong>：在演奏和弦進行時，嘗試加入拇指按低音弦，同時用其他手指按和弦片段並穿插填充樂句的技巧。</li>
+                    </ul>
+                    <p class="mt-3"><strong>深層次的理解</strong>：SRV對Hendrix的吸收並非簡單模仿。Hendrix的影響為SRV的德州藍調核心注入了更廣闊的音樂視野，使其能夠在音色和和聲上進行更大膽的探索，增強了其音樂的搖滾衝擊力和迷幻質感。這也解釋了為何SRV不僅能吸引傳統藍調樂迷，也能打動廣大搖滾聽眾。對學習者而言，探索Hendrix的維度，意味著在SRV的框架之上，開拓了更為豐富的表現手法和音色可能性。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">B. Lonnie Mack的啟示：速度、精準與器樂敘事 💨</h3>
+                    <p>Lonnie Mack是SRV早期的吉他英雄之一，對SRV的快速器樂曲演奏風格和某些技巧運用產生了深遠影響。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>Lonnie Mack的影響</strong>：SRV非常崇拜Lonnie Mack，據說Mack的專輯《The WHAM of that Memphis Man》是SRV購買的第一張唱片之一。Mack的演奏融合了藍調的能量與鄉村/山地搖滾的技巧，其快速、精準的演奏風格給年輕的SRV留下了深刻印象。</li>
+                        <li><strong>關鍵的Mack/SRV元素</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>快速器樂曲</strong>：SRV的標誌性快速器樂曲《Scuttle Buttin'》被廣泛認為是受到了Lonnie Mack的《Chicken Pickin'》的直接啟發。兩首曲子在速度、能量和某些樂句片段上都有相似之處。</li>
+                                <li><strong>顫音琴橋 (Whammy Bar) 的運用</strong>：Lonnie Mack是早期在演奏中創新性使用顫音琴橋的吉他手之一，這點可能也影響了SRV對顫音琴橋的運用。</li>
+                                <li><strong>「雞肉撥弦」(Chicken Pickin') 風格</strong>：這是一種混合了撥片和手指的撥弦技巧，常見於鄉村音樂，能產生快速且富有打擊樂感的音效。SRV的演奏中也帶有這種技巧的影子。</li>
+                                <li><strong>藍調與鄉村/山地搖滾的融合</strong>：Mack的音樂風格本身就是一種融合，SRV的音樂中也時常能聽到這種跨界元素，使其藍調更具獨特性。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                     <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">練習建議：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>聆聽與比較</strong>：仔細聆聽Lonnie Mack的《Chicken Pickin'》、《Wham!》和《Memphis》等作品。將《Chicken Pickin'》與SRV的《Scuttle Buttin'》進行對比分析，找出其中的相似點和SRV的個人發揮。</li>
+                        <li><strong>技巧練習</strong>：針對《Scuttle Buttin'》這類快速器樂曲，重點練習交替撥弦 (alternate picking) 的速度和精準度，以及左手的悶音配合，確保在高速演奏下音符的清晰度。</li>
+                        <li><strong>模仿樂句</strong>：學習Mack和SRV在這些快速曲目中的一些標誌性樂句，感受其指法和撥弦的特點。</li>
+                    </ul>
+                    <p class="mt-3"><strong>深層次的理解</strong>：Lonnie Mack的影響揭示了SRV對純器樂演奏的熱愛以及對高超演奏技巧的不懈追求。Mack那種無需歌詞便能「講述故事」的器樂演奏能力，顯然對SRV產生了重要啟示。這種影響促使SRV從小就磨練自己的演奏技術，以駕馭那些高能量、高技巧要求的樂曲。對學習者而言，研究Lonnie Mack不僅能追溯SRV某些風格的源頭，更能為提升快速演奏技巧和樂句的清晰度提供寶貴的素材和練習方向。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">C. 進階即興：融入情感與Mixolydian色彩的獨奏編織 🎨</h3>
+                    <p>在掌握了基礎即興技巧後，此階段將引導學習者進入更複雜、更富色彩的即興演奏，特別是融入SRV常用的Mixolydian調式以及更深層次的情感表達。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>Mixolydian調式的運用</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>概念</strong>：Mixolydian調式（屬七和弦音階）是藍調和搖滾樂中常用的音階，特別適用於屬七和弦（V級和弦）上，能營造經典的藍調/搖滾聲響。SRV也常在主要藍調進行中的I級和IV級屬七和弦上使用它，或其變體。</li>
+                                <li><strong>SRV的應用</strong>：雖然SRV的核心音階仍是五聲和藍調音階，但他會巧妙地融入Mixolydian調式的色彩，或使用其特徵音（如大三度、小七度）來豐富樂句的和聲內涵。JustinGuitar的「Stevie's Wrong'un」樂句教學中提到，SRV常在V級和弦上使用一個基於E小調五聲音階但加入了9音和b9音的樂句，這暗示了一種更複雜的屬和弦色彩，類似於Mixolydian調式的延伸。</li>
+                            </ul>
+                        </li>
+                        <li><strong>針對和弦音的演奏 (Targeting Chord Tones)</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>重要性</strong>：在即興時有意識地強調和弦的構成音（尤其是三音和七音），能使獨奏更貼合背景和聲，聽起來更悅耳、更有邏輯。</li>
+                                <li><strong>練習</strong>：在12小節藍調進行中，練習在每個和弦轉換時，清晰地彈出該和弦的三音或七音。</li>
+                            </ul>
+                        </li>
+                        <li><strong>半音經過音 (Chromatic Passing Tones)</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>作用</strong>：在五聲音階或藍調音階的基礎上，加入半音經過音可以增加樂句的藍調味，並使樂句之間的過渡更平滑。例如，在四音和五音之間，或小七音和根音之間加入半音。</li>
+                            </ul>
+                        </li>
+                        <li><strong>獨奏的構建與情感表達</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>結構感</strong>：一個好的獨奏應該有起承轉合，透過動態變化、張力與釋放來構建。</li>
+                                <li><strong>情感投入</strong>：將個人情感融入即興演奏中，讓技巧服務於情感的表達。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                     <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">練習建議：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>Mixolydian練習</strong>：在藍調進行的每個屬七和弦上練習彈奏相應的Mixolydian音階。</li>
+                        <li><strong>和弦音練習</strong>：識別12小節藍調中每個和弦的三音和七音，並在即興時有意識地將它們作為樂句的落腳點或強調點。</li>
+                        <li><strong>半音練習</strong>：在熟悉的五聲音階樂句中，嘗試加入半音經過音，感受其色彩變化。</li>
+                        <li><strong>長段即興錄音</strong>：錄下自己較長段落的即興演奏，分析其結構是否合理，情感表達是否到位，是否有有效地運用空間和動態。</li>
+                    </ul>
+                    <p class="mt-3">SRV的「進階」即興並非依賴於大量奇特的音階，而更多的是對藍調音階、五聲音階和Mixolydian調式色彩的精湛運用，並透過極具表現力的樂句、豐富的半音和聲以及令人難以置信的情感張力來實現。對V級和弦功能的深刻理解，使得Mixolydian調式的應用更為自然和動聽。而有意識地針對和弦音進行演奏，則賦予了獨奏更強的和聲根基。「Stevie's Wrong'un」這類包含「界外音」(如b9音) 的樂句，表明SRV敢於在穩固的基礎上進行大膽的聲音實驗，以製造張力，這是進階藍調和受爵士影響的演奏中常見的特徵。這鼓勵學習者在打下堅實基礎後，勇於探索「安全」音階選擇之外的可能性。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">D. 超越音符：傳達SRV的情感張力與舞台能量 ❤️‍🔥</h3>
+                    <p>掌握SRV風格的終極目標，不僅僅是複製他的音符和技巧，更重要的是能夠傳達他音樂中那股強烈的情感張力與舞台上令人震撼的能量。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>SRV情感表達的核心</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>原始情感 (Raw Emotion)</strong>：SRV的演奏以其傾注於每個音符的原始情感而著稱。他的音樂直接觸動聽眾的心弦。</li>
+                                <li><strong>透過技巧傳達情感</strong>：推弦、顫音、動態變化和極具歌唱性的樂句，都是他傳達情感的重要工具。例如，LickLibrary在教授《Texas Flood》時，便強調透過這些技巧傳達情感的重要性。</li>
+                                <li><strong>音樂即對話</strong>：將獨奏視為一場對話，運用停頓、音量起伏和富於表情的技巧來傳達情感。</li>
+                            </ul>
+                        </li>
+                        <li><strong>舞台能量與連結</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>電光火石的現場</strong>：SRV的現場表演充滿了能量，能營造出令人激動的氛圍，並與觀眾建立深厚的連結。</li>
+                                <li><strong>真誠與脆弱</strong>：即使在不插電的表演中，如MTV Unplugged，SRV依然能展現其音樂的真誠和脆弱感，傳達出強烈的個人情感。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                     <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">練習建議：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>有意識地注入情感</strong>：在練習歌曲或即興演奏時，嘗試將不同的情感（如悲傷、憤怒、喜悅、溫柔）融入樂句中。思考你希望透過這段音樂表達什麼。</li>
+                        <li><strong>精雕細琢動態</strong>：專注於樂句的動態塑造，例如從輕柔開始逐漸增強，或突然爆發出強烈的重音。</li>
+                        <li><strong>觀摩現場表演</strong>：觀看SRV的現場演出錄影（如Austin City Limits、El Mocambo），觀察他的肢體語言、舞台能量以及他如何透過演奏與觀眾互動。</li>
+                        <li><strong>投入地演奏</strong>：即使在練習室中，也要帶著信念和激情去演奏，彷彿面對著真正的聽眾。</li>
+                    </ul>
+                    <p class="mt-3"><strong>深層次的理解</strong>：SRV的情感張力源於他對藍調傳統的深刻理解和他個人的生活體驗，這是無法完全複製的。然而，理解其重要性，能鼓勵學習者發自內心地演奏，而不僅僅是機械地執行技巧。動態控制（第二階段C）和推弦、顫音等表現力技巧（第二階段A、C）的掌握，為有效傳達這些深層情感提供了技術手段。沒有這些控制，所謂的情感演奏可能會顯得失控或缺乏說服力。這個層面的學習，是從技術的奴隸轉變為藝術的主人，也是學習者開始尋找受SRV啟發但屬於自己的聲音的起點。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">E. 巔峰曲目：征服SRV的代表作 🏆</h3>
+                    <p>在六個月計畫的尾聲，學習者應挑戰SRV曲庫中最具代表性、技巧最全面、情感最深沉的「巔峰之作」。這些曲目是檢驗學習成果的試金石。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>選曲理由</strong>：這些作品代表了SRV在技術、情感和即興演奏方面的最高成就。</li>
+                        <li><strong>建議曲目</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>《Lenny》</strong>：這首溫柔而深情的器樂曲，展現了SRV抒情的一面，深受Jimi Hendrix影響，對音色控制、細膩的推弦和顫音、以及旋律的歌唱性有極高要求。</li>
+                                <li><strong>《Riviera Paradise》</strong>：另一首優美的器樂作品，融合了藍調與爵士的元素，旋律悠揚，和聲豐富，同樣體現了Hendrix的影響。</li>
+                                <li><strong>《Voodoo Child (Slight Return)》 (Hendrix Cover)</strong>：SRV對此曲的演繹已成為經典，充滿了原始的能量、侵略性的獨奏、以及對哇音踏板的精湛運用，是其舞台魅力的集中體現。Austin City Limits的現場版本尤其能展現其「原始的張力和精湛技藝」。</li>
+                                <li><strong>《The Sky Is Crying》</strong>：這首慢板藍調的傑作，考驗演奏者對慢速推弦、強烈顫音、琶音以及整體情感氛圍的掌控能力。LickLibrary課程將其描述為培養「抒情和深情獨奏風格」的曲目。</li>
+                                <li><strong>《Tightrope》</strong>：一首結構複雜、節奏多變的Shuffle曲目，對吉他技巧和樂隊配合都有很高要求，其中運用了「Albert King Box」和推弦疊加等技巧。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                     <h4 class="text-lg font-semibold mt-3 mb-1 text-sky-600">學習方法：</h4>
+                     <ul class="list-disc list-inside space-y-1">
+                        <li><strong>深度剖析</strong>：仔細研究歌曲的結構、和聲進行、SRV在各個段落的樂句選擇和編排。</li>
+                        <li><strong>精雕細琢</strong>：逐個樂句、逐個段落地進行細緻學習和練習，不放過任何一個細節。</li>
+                        <li><strong>捕捉神韻</strong>：不僅要彈對音符，更要努力捕捉每首作品特有的「感覺」和情感起伏。</li>
+                        <li><strong>全面檢驗</strong>：這些曲目將全面檢驗學習者在過去五個月中積累的所有技能——從基本的握持與撥弦，到複雜的樂句和節奏感，再到進階的即興能力和情感投射。</li>
+                    </ul>
+                    <p class="mt-3"><strong>深層次的理解</strong>：這些「代表作」不僅僅是技巧的展示，更是完整的音樂陳述，體現了SRV將技術、音色和情感融合成一個有機整體的非凡能力。成功演奏這些曲目，需要前面所有階段學習成果的累積。這不僅能帶來巨大的成就感，也為學習者提供了一個衡量自身進步的標準，並為其未來在SRV風格基礎上發展個人特色，提供了豐富的音樂語彙和深刻的理解。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">F. 維持你的旅程：自我評估、持續學習與發展獨特的藍調之聲 🚀</h3>
+                    <p>六個月的密集訓練是一個重要的里程碑，但音樂的學習永無止境。此階段的目標是確保學習者能夠將所學內化，並開啟持續成長、最終形成個人風格的道路。</p>
+                    <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                        <li><strong>自我評估的重要性</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>定期錄音</strong>：錄下自己的演奏（歌曲或即興）並進行客觀的聆聽與評判，是發現優點和不足的最有效方法之一。</li>
+                                <li><strong>練習日誌</strong>：記錄練習內容、時長、遇到的困難和取得的進展，有助於保持練習的焦點和動力。</li>
+                            </ul>
+                        </li>
+                        <li><strong>持續學習的途徑</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>拓展視野</strong>：除了SRV，繼續探索其他藍調大師（如B.B. King, Muddy Waters, Howlin' Wolf等）以及與藍調相關的音樂類型（如爵士、靈魂樂、搖滾），吸收更廣泛的音樂養分。</li>
+                                <li><strong>深化理論</strong>：學習更深入的樂理知識，如和聲學、調式理論等，有助於理解音樂的結構和即興的更多可能性。</li>
+                                <li><strong>尋求反饋</strong>：如果條件允許，尋求經驗豐富的老師或與其他樂手交流，獲得客觀的評價和建議。</li>
+                            </ul>
+                        </li>
+                        <li><strong>形成個人風格</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>從模仿到創造</strong>：學習SRV的目標並非成為一個複製者，而是要吸收其精髓，並將其融入自己的音樂語言中。一位論壇用戶曾言：「如果你即興獨奏和主奏，你仍會鍛鍊大腦的創造性部分，避免成為一台高級磁帶播放機。」</li>
+                                <li><strong>實驗與探索</strong>：嘗試不同的技巧組合、音色調製和樂句構建方式，找到最能代表自己聲音的表達方式。</li>
+                                <li><strong>開始創作</strong>：嘗試創作自己的藍調作品，這是將所學融會貫通並表達個人音樂理念的最佳途徑。</li>
+                            </ul>
+                        </li>
+                        <li><strong>實踐策略</strong>：
+                            <ul class="list-circle list-inside ml-4 mt-1 space-y-1">
+                                <li><strong>設定新目標</strong>：六個月計畫結束後，為自己設定新的、更長遠的學習目標。</li>
+                                <li><strong>參與合奏</strong>：加入藍調樂隊或參與Jam session，在實際的音樂環境中應用和磨練所學技巧，與其他樂手互動能激發新的靈感。</li>
+                                <li><strong>保持熱情</strong>：音樂學習是一個漫長的旅程，保持對音樂的熱愛和好奇心是持續進步的動力源泉。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <p class="mt-3">最終的目標是成為一位受SRV啟發，但擁有自己獨特聲音的藍調吉他手。正如Riffhard所強調的：「最終，掌握Stevie Ray Vaughan的音色不僅僅是複製他的裝備和技巧……嘗試不同的技巧、音色和音樂影響，創造出屬於你自己的獨特聲音。」這六個月的密集訓練為此打下了堅實的技術和風格基礎，接下來的道路則需要學習者憑藉持續的努力和對音樂的熱愛，去開拓和塑造。</p>
+                </div>
+            </section>
+
+            <section id="conclusion" class="content-section bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold text-sky-700 mb-4">結論：藍調樂手的畢生之路</h2>
+                
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">A. 六個月及以後：持續成長 📈</h3>
+                    <p>為期六個月的Stevie Ray Vaughan風格吉他速成計畫，為有志者勾勒了一條清晰的進階路徑。從基礎的音色塑造、持琴撥弦，到核心的德州Shuffle節奏、藍調音階樂句，再到進階的推弦顫音、Rubato浮動節奏，乃至對Albert King、Jimi Hendrix、Lonnie Mack等影響SRV的音樂大師風格的汲取，以及最終對SRV巔峰曲目的挑戰和即興能力的培養，每一步都旨在系統性地構建SRV式的演奏能力。</p>
+                    <p class="mt-2">然而，正如計畫開始時所強調的，六個月的時間是為了奠定堅實的基礎。音樂的精進是一條永無止境的道路。正如倫敦吉他學院所言：「堅持是關鍵。持續練習——即使是少量而持續的練習，久而久之也會帶來突破。」完成此計畫後，學習者應將所養成的良好練習習慣——如設定目標、結構化練習、定期自我評估——延續下去。持續聆聽、與其他樂手合奏、探索新的音樂領域，都將是未來成長不可或缺的養分。</p>
+                </div>
+
+                <div class="sub-section">
+                    <h3 class="text-xl font-semibold text-sky-600">B. 體現精神，而非僅僅模仿樂句 🌟</h3>
+                    <p>學習Stevie Ray Vaughan的最終目的，不應僅僅停留在對其樂句和技巧的精準複製。更重要的是，要努力體現他音樂中所蘊含的精神——那份對藍調音樂的深沉熱愛、那份發自肺腑的情感宣洩、以及那份對音樂表達的極致追求。</p>
+                    <p class="mt-2">SRV的音樂之所以能跨越時代感動無數聽眾，正是因為他將自己的靈魂注入了每一個音符。正如Riffhard所指出的：「要真正抓住Stevie的音色，你需要與音樂在情感層面建立聯繫。」藍調音樂本身就源於生活的掙扎與情感的吶喊，SRV正是這一傳統的忠實繼承者和偉大發揚者。</p>
+                    <p class="mt-2">因此，在走過這六個月的旅程之後，希望每位學習者都能帶著從SRV身上學到的技巧、感悟和對藍調的熱情，去演奏屬於自己的音樂，用吉他講述自己的故事。技術是載體，情感才是靈魂。唯有如此，才能真正向這位不朽的藍調傳奇致敬，並在自己的音樂道路上，成為一位名副其實的「藍調樂手」。</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 py-6 border-t border-slate-300">
+            <p class="text-sm text-slate-500">&copy; SRV風格吉他養成計畫互動版。祝您練習愉快！</p>
+        </footer>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            const contentSections = document.querySelectorAll('.content-section');
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+                if (button.getAttribute('onclick').includes(tabId)) {
+                    button.classList.add('active');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
