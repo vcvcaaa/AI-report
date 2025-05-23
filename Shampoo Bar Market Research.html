@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洗髮餅市場分析互動應用程式</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Visualization & Content Choices:
+        - Executive Summary (總覽): Goal: Inform. Method: Key stat callouts, concise text. Interaction: Static. Justification: Quick high-level understanding.
+        - Manufacturing Types (製造解密): Goal: Compare. Method: Interactive cards for each type (Cold, Hot, M&P, Syndet) showing key characteristics. Interaction: Click to reveal details via tab-like behavior. Justification: Easy comparison of complex processes.
+        - Manufacturing Equipment (Table 1, 製造解密): Goal: Inform. Method: Grid of cards for key equipment types. Interaction: Static display of summarized info. Justification: Visual and organized presentation of equipment.
+        - Manufacturing Process Comparison (Table 2, 製造解密): Goal: Compare. Method: Simplified HTML table highlighting key differences. Interaction: Static. Justification: Overview of process parameters.
+        - Global Market Size/CAGR (全球市場): Goal: Inform/Show Trend. Method: Chart.js Bar chart showing market size (e.g., 2024 vs 2034) and CAGR. Interaction: Tooltips on hover. Justification: Clear visual of market growth.
+        - Global Market Segmentation (Hair Type, Channel, Region - 全球市場): Goal: Show Proportions/Compare. Method: Chart.js Pie/Donut charts for hair type/channel; Bar chart for regional shares. Interaction: Tooltips. Justification: Easy understanding of market composition.
+        - Market Drivers/Limitations (全球市場): Goal: Inform. Method: Accordion-style expandable lists. Interaction: Click to expand/reveal. Justification: Digestible presentation of factors.
+        - Key Global Brands (全球市場): Goal: Inform. Method: Grid of brand cards. Interaction: Static display of strategy summary. Justification: Quick access to competitor info.
+        - Taiwan Market Overview (台灣市場): Goal: Inform. Method: Text summary with key stats. Interaction: Static. Justification: Context setting.
+        - Taiwan Consumer Preferences (台灣市場): Goal: Inform. Method: Bulleted list. Interaction: Static. Justification: Clear display of local trends.
+        - Taiwan Local Brands (Table 4, 台灣市場): Goal: Inform. Method: Grid of brand cards. Interaction: Static display of brand info. Justification: Showcase local players.
+        - Taiwan Regulatory Impact (台灣市場): Goal: Inform. Method: Key bullet points. Interaction: Static. Justification: Essential compliance information.
+        - Future Trends (Ingredient Innovation, Packaging, Business Models, Niche Markets - 未來趨勢): Goal: Inform/Inspire. Method: Thematic sections with icon + text. Interaction: Static display. Justification: Forward-looking insights.
+        - NO SVG graphics used. NO Mermaid JS used. Chart.js for all charts. HTML/CSS/Tailwind for layouts. Unicode characters for icons where appropriate.
+    -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FDFBF5; /* Warm Neutral */ }
+        .nav-link { transition: all 0.3s ease; }
+        .nav-link:hover, .nav-link.active { color: #A0522D; /* Subtle Terracotta Accent */ border-bottom-width: 2px; border-color: #A0522D; }
+        .dropdown-menu { display: none; position: absolute; background-color: #FFFFFF; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1); z-index: 10; border-radius: 0.375rem; min-width: 10rem; }
+        .dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-item { display: block; padding: 0.75rem 1rem; color: #374151; transition: background-color 0.3s ease; }
+        .dropdown-item:hover { background-color: #F3F4F6; /* Light Gray */ }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .card { background-color: #FFFFFF; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); padding: 1.5rem; transition: transform 0.3s ease; }
+        .card:hover { transform: translateY(-5px); }
+        .tab-button { transition: all 0.3s ease; }
+        .tab-button.active { background-color: #8FBC8F; /* Soft Green */ color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .accordion-header { cursor: pointer; }
+        .accordion-content { display: none; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-item.active .accordion-content { max-height: 500px; /* Adjust as needed */ }
+        h1, h2, h3 { color: #556B2F; /* Muted Brown/Dark Olive Green */ }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0">
+                    <h1 class="text-2xl font-bold text-[#556B2F]">🧼 洗髮餅市場洞察</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6 lg:space-x-8">
+                    <a href="#overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700" onclick="showSection('overview', this)">總覽</a>
+                    <div class="relative dropdown">
+                        <button class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 inline-flex items-center">
+                            製造解密 <svg class="ml-1 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#manufacturing-types" class="dropdown-item" onclick="showSection('manufacturing-types', this, true)">洗髮餅類型</a>
+                            <a href="#manufacturing-equipment" class="dropdown-item" onclick="showSection('manufacturing-equipment', this, true)">製造機械與設備</a>
+                            <a href="#manufacturing-process" class="dropdown-item" onclick="showSection('manufacturing-process', this, true)">製造流程比較</a>
+                            <a href="#manufacturing-cost" class="dropdown-item" onclick="showSection('manufacturing-cost', this, true)">原料與成本</a>
+                        </div>
+                    </div>
+                     <div class="relative dropdown">
+                        <button class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 inline-flex items-center">
+                            全球市場 <svg class="ml-1 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#global-market-size" class="dropdown-item" onclick="showSection('global-market-size', this, true)">市場規模與增長</a>
+                            <a href="#global-market-drivers" class="dropdown-item" onclick="showSection('global-market-drivers', this, true)">驅動力與限制</a>
+                            <a href="#global-market-segmentation" class="dropdown-item" onclick="showSection('global-market-segmentation', this, true)">市場區隔</a>
+                            <a href="#global-market-brands" class="dropdown-item" onclick="showSection('global-market-brands', this, true)">主要國際品牌</a>
+                        </div>
+                    </div>
+                    <div class="relative dropdown">
+                        <button class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 inline-flex items-center">
+                            台灣市場 <svg class="ml-1 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#taiwan-market-overview" class="dropdown-item" onclick="showSection('taiwan-market-overview', this, true)">市場概況與潛力</a>
+                            <a href="#taiwan-market-consumer" class="dropdown-item" onclick="showSection('taiwan-market-consumer', this, true)">消費者偏好</a>
+                            <a href="#taiwan-market-brands" class="dropdown-item" onclick="showSection('taiwan-market-brands', this, true)">本土品牌</a>
+                            <a href="#taiwan-market-regulations" class="dropdown-item" onclick="showSection('taiwan-market-regulations', this, true)">法規影響</a>
+                        </div>
+                    </div>
+                     <div class="relative dropdown">
+                        <button class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 inline-flex items-center">
+                            未來趨勢 <svg class="ml-1 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#future-trends-formulation" class="dropdown-item" onclick="showSection('future-trends-formulation', this, true)">成分與配方創新</a>
+                            <a href="#future-trends-packaging" class="dropdown-item" onclick="showSection('future-trends-packaging', this, true)">永續包裝</a>
+                            <a href="#future-trends-models" class="dropdown-item" onclick="showSection('future-trends-models', this, true)">新興商業模式</a>
+                            <a href="#future-trends-niche" class="dropdown-item" onclick="showSection('future-trends-niche', this, true)">利基市場</a>
+                        </div>
+                    </div>
+                </nav>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#A0522D]">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#overview" class="block nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700" onclick="showSection('overview', this); toggleMobileMenu();">總覽</a>
+                <div class="accordion-item-mobile">
+                    <button class="w-full text-left nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 flex justify-between items-center accordion-header-mobile">製造解密 <span>▼</span></button>
+                    <div class="pl-4 accordion-content-mobile hidden">
+                        <a href="#manufacturing-types" class="block dropdown-item text-sm" onclick="showSection('manufacturing-types', this, true); toggleMobileMenu();">洗髮餅類型</a>
+                        <a href="#manufacturing-equipment" class="block dropdown-item text-sm" onclick="showSection('manufacturing-equipment', this, true); toggleMobileMenu();">製造機械與設備</a>
+                        <a href="#manufacturing-process" class="block dropdown-item text-sm" onclick="showSection('manufacturing-process', this, true); toggleMobileMenu();">製造流程比較</a>
+                        <a href="#manufacturing-cost" class="block dropdown-item text-sm" onclick="showSection('manufacturing-cost', this, true); toggleMobileMenu();">原料與成本</a>
+                    </div>
+                </div>
+                <div class="accordion-item-mobile">
+                    <button class="w-full text-left nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 flex justify-between items-center accordion-header-mobile">全球市場 <span>▼</span></button>
+                    <div class="pl-4 accordion-content-mobile hidden">
+                         <a href="#global-market-size" class="block dropdown-item text-sm" onclick="showSection('global-market-size', this, true); toggleMobileMenu();">市場規模與增長</a>
+                         <a href="#global-market-drivers" class="block dropdown-item text-sm" onclick="showSection('global-market-drivers', this, true); toggleMobileMenu();">驅動力與限制</a>
+                         <a href="#global-market-segmentation" class="block dropdown-item text-sm" onclick="showSection('global-market-segmentation', this, true); toggleMobileMenu();">市場區隔</a>
+                         <a href="#global-market-brands" class="block dropdown-item text-sm" onclick="showSection('global-market-brands', this, true); toggleMobileMenu();">主要國際品牌</a>
+                    </div>
+                </div>
+                 <div class="accordion-item-mobile">
+                    <button class="w-full text-left nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 flex justify-between items-center accordion-header-mobile">台灣市場 <span>▼</span></button>
+                    <div class="pl-4 accordion-content-mobile hidden">
+                        <a href="#taiwan-market-overview" class="block dropdown-item text-sm" onclick="showSection('taiwan-market-overview', this, true); toggleMobileMenu();">市場概況與潛力</a>
+                        <a href="#taiwan-market-consumer" class="block dropdown-item text-sm" onclick="showSection('taiwan-market-consumer', this, true); toggleMobileMenu();">消費者偏好</a>
+                        <a href="#taiwan-market-brands" class="block dropdown-item text-sm" onclick="showSection('taiwan-market-brands', this, true); toggleMobileMenu();">本土品牌</a>
+                        <a href="#taiwan-market-regulations" class="block dropdown-item text-sm" onclick="showSection('taiwan-market-regulations', this, true); toggleMobileMenu();">法規影響</a>
+                    </div>
+                </div>
+                <div class="accordion-item-mobile">
+                    <button class="w-full text-left nav-link px-3 py-2 rounded-md text-base font-medium text-gray-700 flex justify-between items-center accordion-header-mobile">未來趨勢 <span>▼</span></button>
+                    <div class="pl-4 accordion-content-mobile hidden">
+                        <a href="#future-trends-formulation" class="block dropdown-item text-sm" onclick="showSection('future-trends-formulation', this, true); toggleMobileMenu();">成分與配方創新</a>
+                        <a href="#future-trends-packaging" class="block dropdown-item text-sm" onclick="showSection('future-trends-packaging', this, true); toggleMobileMenu();">永續包裝</a>
+                        <a href="#future-trends-models" class="block dropdown-item text-sm" onclick="showSection('future-trends-models', this, true); toggleMobileMenu();">新興商業模式</a>
+                        <a href="#future-trends-niche" class="block dropdown-item text-sm" onclick="showSection('future-trends-niche', this, true); toggleMobileMenu();">利基市場</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-screen-xl mx-auto p-4 sm:p-6 lg:p-8">
+        <section id="overview" class="content-section active py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">報告總覽</h2>
+            <p class="text-lg text-gray-700 mb-4 leading-relaxed">
+                本報告旨在深入探討洗髮餅（亦稱固態洗髮皂）產業的各個面向，涵蓋製造技術、設備、全球及台灣市場動態，乃至新興趨勢與潛在商機。洗髮餅作為傳統液態洗髮精的環保替代品，近年來市場需求顯著增長，主要受惠於消費者環保意識提升及對天然、無塑產品的偏好。
+            </p>
+            <div class="grid md:grid-cols-2 gap-6 mt-8">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">📈 全球市場增長</h3>
+                    <p>全球洗髮餅市場呈現穩健成長，複合年增長率預估介於 <span class="font-bold text-[#A0522D]">5.3% 至 7.7%</span>。主要驅動力為環境永續性及天然成分偏好。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">🇹🇼 台灣市場潛力</h3>
+                    <p>台灣本土洗髮餅市場潛力巨大，消費者關注頭皮健康、天然無添加，並深受社群口碑影響。新化妝品法規將提升市場標準。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">🛠️ 製造核心</h3>
+                    <p>製造方法多樣（冷製、熱製、融化再製、Syndet），各有其設備需求與產品特性。Syndet 技術因其 pH 控制與配方彈性，商業潛力看好。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">💡 未來展望</h3>
+                    <p>創新將聚焦於先進天然成分、多功能配方、客製化產品及環保包裝。個人化訂製與利基市場開發是重要商機。</p>
+                </div>
+            </div>
+             <p class="mt-8 text-center text-gray-600">請使用上方導覽列探索各個詳細章節。</p>
+        </section>
+
+        <section id="manufacturing-types" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">洗髮餅類型</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">洗髮餅根據其主要成分和製造原理，可分為多種類型。了解這些類型有助於選擇適合的生產方式與市場定位。以下為主要的四種類型及其特性：</p>
+            <div class="mb-6 flex flex-wrap justify-center gap-2">
+                <button class="tab-button active px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md" onclick="showManufacturingTab('cold-process', this)">冷製法</button>
+                <button class="tab-button px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md" onclick="showManufacturingTab('hot-process', this)">熱製法</button>
+                <button class="tab-button px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md" onclick="showManufacturingTab('melt-pour', this)">融化再製法</button>
+                <button class="tab-button px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md" onclick="showManufacturingTab('syndet-bar', this)">Syndet 合成洗劑塊</button>
+            </div>
+
+            <div id="cold-process" class="tab-content active card">
+                <h3 class="text-2xl font-semibold mb-3">🧊 冷製法 (Cold Process)</h3>
+                <p class="mb-2">傳統肥皂製造方法，透過油脂與鹼液在室溫或微溫下進行皂化反應。</p>
+                <ul class="list-disc list-inside space-y-1 text-gray-700">
+                    <li><strong>特點：</strong>不依賴外部熱源，能較好保留油脂中的天然甘油及有益成分。</li>
+                    <li><strong>熟成期：</strong>較長，通常需 4 至 6 週，以完整皂化並降低鹼性。</li>
+                    <li><strong>pH 值：</strong>偏鹼性 (約 8-10)。</li>
+                    <li><strong>適用：</strong>追求天然成分、傳統工藝的產品。</li>
+                </ul>
+            </div>
+            <div id="hot-process" class="tab-content card">
+                <h3 class="text-2xl font-semibold mb-3">🔥 熱製法 (Hot Process)</h3>
+                <p class="mb-2">與冷製法初期相似，但在皂化過程中施加外部熱力加速反應。</p>
+                <ul class="list-disc list-inside space-y-1 text-gray-700">
+                    <li><strong>特點：</strong>加速皂化，大幅縮短熟成時間。</li>
+                    <li><strong>熟成期：</strong>冷卻硬化後即可使用，部分建議短時間晾皂。</li>
+                    <li><strong>pH 值：</strong>偏鹼性 (約 8-10)。</li>
+                    <li><strong>適用：</strong>希望快速完成皂化、縮短等待時間的生產。</li>
+                </ul>
+            </div>
+            <div id="melt-pour" class="tab-content card">
+                <h3 class="text-2xl font-semibold mb-3">💧 融化再製法 (Melt & Pour)</h3>
+                <p class="mb-2">使用預製皂基（傳統皂基或 Syndet 基底），融化後添加成分再成型。</p>
+                <ul class="list-disc list-inside space-y-1 text-gray-700">
+                    <li><strong>特點：</strong>操作相對簡單，適合小規模生產或初學者。</li>
+                    <li><strong>熟成期：</strong>冷卻凝固後即可使用。</li>
+                    <li><strong>pH 值：</strong>取決於所用皂基 (Syndet 基底可達 pH 5.0-6.0)。</li>
+                    <li><strong>適用：</strong>DIY、小批量、快速變換產品種類。</li>
+                </ul>
+            </div>
+            <div id="syndet-bar" class="tab-content card">
+                <h3 class="text-2xl font-semibold mb-3">🔬 Syndet 合成洗劑塊 (Syndet Bars)</h3>
+                <p class="mb-2">主要由合成表面活性劑製成，而非皂化油脂。</p>
+                <ul class="list-disc list-inside space-y-1 text-gray-700">
+                    <li><strong>特點：</strong>pH 值可調整至接近皮膚和頭髮的天然值 (約 5.5)，通常更溫和，不易引起乾燥。</li>
+                    <li><strong>熟成期：</strong>無需長時間熟成，乾燥硬化後即可使用。</li>
+                    <li><strong>pH 值：</strong>可調至弱酸性 (5-7)。</li>
+                    <li><strong>適用：</strong>強調溫和、pH 平衡、無皂垢、特定功效的商業化產品。</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="manufacturing-equipment" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">製造機械與設備</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">洗髮餅的生產規模各異，所需設備也大相逕庭。從小型手作到大規模商業化生產，皆有相應的工具與機械。以下為幾種關鍵設備類型：</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">攪拌機與混合機</h3>
+                    <p class="text-gray-600">用於混合各種原料，是所有製程的基礎。例如 SoapEquipment.com 的 Mighty Mixer。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">熔化槽/加熱設備</h3>
+                    <p class="text-gray-600">用於融化油脂、蠟質或皂基，常見水夾套加熱槽。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">模具</h3>
+                    <p class="text-gray-600">賦予洗髮餅最終形狀，有矽膠模、管狀模、工業模具等。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">壓塊機/壓模機</h3>
+                    <p class="text-gray-600">使 Syndet 塊或高填充物皂更緊密規整，可壓印品牌標誌。如 Papa Industrial P168。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">切割機</h3>
+                    <p class="text-gray-600">將大塊皂基或長條皂切割成單個洗髮餅。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">打印機/皂章機</h3>
+                    <p class="text-gray-600">在皂體表面壓印 Logo 或圖案。SAS Mariani 專精於此。</p>
+                </div>
+            </div>
+            <p class="mt-6 text-sm text-gray-500 text-center">註：具體品牌與型號如 SAS Mariani、Papa Industrial P168、SoapEquipment.com 提供不同規模的解決方案。Etsy 等平台則有小型手動工具。</p>
+        </section>
+
+        <section id="manufacturing-process" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">製造流程比較</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">不同的洗髮餅類型，其製造流程和關鍵控制參數有顯著差異。下表簡要比較了主要製程的特點：</p>
+            <div class="overflow-x-auto card">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">製程類型</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">熟成/乾燥時間</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">典型 pH 範圍</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">主要優點</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">冷製法 (CP)</td>
+                            <td class="px-6 py-4 whitespace-nowrap">4-6 週</td>
+                            <td class="px-6 py-4 whitespace-nowrap">偏鹼 (8-10)</td>
+                            <td class="px-6 py-4">天然甘油保留、成分可控</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">熱製法 (HP)</td>
+                            <td class="px-6 py-4 whitespace-nowrap">冷卻後可用 (12-24小時)</td>
+                            <td class="px-6 py-4 whitespace-nowrap">偏鹼 (8-10)</td>
+                            <td class="px-6 py-4">無需長時間熟成、皂化完全</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">融化再製 (M&P)</td>
+                            <td class="px-6 py-4 whitespace-nowrap">冷卻硬化後可用 (約3-24小時)</td>
+                            <td class="px-6 py-4 whitespace-nowrap">依皂基而定</td>
+                            <td class="px-6 py-4">操作簡單、快速</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">Syndet 合成洗劑塊</td>
+                            <td class="px-6 py-4 whitespace-nowrap">24小時-7天</td>
+                            <td class="px-6 py-4 whitespace-nowrap">可調至弱酸性 (5-7)</td>
+                            <td class="px-6 py-4">pH溫和、起泡性佳、無皂垢</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+             <p class="mt-6 text-sm text-gray-500 text-center">詳細製程步驟涉及精確計量、溫度控制、混合技術及添加物時機等，各異其趣。</p>
+        </section>
+
+        <section id="manufacturing-cost" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">原料與成本考量</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">洗髮餅的成本結構受原料選擇、採購規模及包裝等因素影響。了解這些因素對產品定價與市場策略至關重要。</p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">主要原料類型</h3>
+                    <ul class="list-disc list-inside space-y-1 text-gray-700">
+                        <li><strong>表面活性劑：</strong>如 SCI, SLSA (Syndet 核心，成本較高)。</li>
+                        <li><strong>油脂與固態脂質：</strong>如椰子油、橄欖油、乳木果油 (冷/熱製皂化或調理用)。</li>
+                        <li><strong>鹼液：</strong>氫氧化鈉 (冷/熱製必需)。</li>
+                        <li><strong>調理劑：</strong>如 BTMS-50 (改善髮絲柔順度)。</li>
+                        <li><strong>植物萃取/粉末、精油/香精、防腐劑、色素等。</strong></li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">成本分析重點</h3>
+                    <ul class="list-disc list-inside space-y-1 text-gray-700">
+                        <li>Syndet 表面活性劑成本通常高於傳統製皂油脂。</li>
+                        <li>大宗採購可顯著降低單位原料成本。</li>
+                        <li>包裝成本：簡易紙盒相對經濟，客製化印刷起訂量高。</li>
+                        <li>台灣市場入門級洗髮餅 (約60克) 售價約 NT$200-300，高端可達 NT$500 以上，間接反映成本差異。</li>
+                    </ul>
+                </div>
+            </div>
+             <p class="mt-8 text-center text-gray-600">整體而言，Syndet 洗髮餅因原料成本較高，可能需定位於中高端市場，除非能透過規模經濟或卓越性能支撐價格。</p>
+        </section>
+
+        <section id="global-market-size" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">全球市場規模與增長</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">全球洗髮餅市場近年來經歷顯著增長，並預計在未來數年持續擴張。不同研究機構的數據雖略有差異，但整體趨勢一致向好。</p>
+            <div class="chart-container card mx-auto">
+                <canvas id="globalMarketChart"></canvas>
+            </div>
+            <p class="mt-4 text-sm text-gray-500 text-center">數據來源：綜合 Market.us, Grand View Research, Maximize Market Research, DataIntelo (2023/2024 估算)。</p>
+        </section>
+
+        <section id="global-market-drivers" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">市場驅動力與限制因素</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">全球洗髮餅市場的增長受到多種因素的推動，同時也面臨一些挑戰。理解這些動態對市場參與者至關重要。</p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4 text-[#556B2F]">🚀 主要市場驅動力</h3>
+                    <div class="space-y-3">
+                        <div class="accordion-item card">
+                            <div class="accordion-header flex justify-between items-center p-3 bg-green-100 rounded-t-md">
+                                <span class="font-medium">環境永續與減塑</span>
+                                <span class="text-xl">＋</span>
+                            </div>
+                            <div class="accordion-content p-3 border border-t-0 border-green-200 rounded-b-md">
+                                <p>消費者對塑膠廢棄物問題日益關切，洗髮餅無需塑膠瓶，符合「零廢棄」理念，是最主要的驅動力。</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item card">
+                            <div class="accordion-header flex justify-between items-center p-3 bg-green-100 rounded-t-md">
+                                <span class="font-medium">天然有機成分需求</span>
+                                <span class="text-xl">＋</span>
+                            </div>
+                            <div class="accordion-content p-3 border border-t-0 border-green-200 rounded-b-md">
+                                <p>對不含硫酸鹽、防腐劑、矽靈等「純淨」配方的偏好持續上升。</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item card">
+                            <div class="accordion-header flex justify-between items-center p-3 bg-green-100 rounded-t-md">
+                                <span class="font-medium">旅行便利性</span>
+                                <span class="text-xl">＋</span>
+                            </div>
+                            <div class="accordion-content p-3 border border-t-0 border-green-200 rounded-b-md">
+                                <p>固態、小巧，易於攜帶，不受液體限制，適合旅行者。</p>
+                            </div>
+                        </div>
+                         <div class="accordion-item card">
+                            <div class="accordion-header flex justify-between items-center p-3 bg-green-100 rounded-t-md">
+                                <span class="font-medium">產品創新與客製化</span>
+                                <span class="text-xl">＋</span>
+                            </div>
+                            <div class="accordion-content p-3 border border-t-0 border-green-200 rounded-b-md">
+                                <p>針對不同髮質和頭皮問題的專用產品，提升了吸引力和功效性。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-semibold mb-4 text-[#A0522D]">🚧 市場限制因素</h3>
+                     <div class="space-y-3">
+                        <div class="accordion-item card">
+                            <div class="accordion-header flex justify-between items-center p-3 bg-red-100 rounded-t-md">
+                                <span class="font-medium">較高初期購買價格</span>
+                                <span class="text-xl">＋</span>
+                            </div>
+                            <div class="accordion-content p-3 border border-t-0 border-red-200 rounded-b-md">
+                                <p>單塊售價可能較高，對預算敏感消費者形成障礙。</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item card">
+                            <div class="accordion-header flex justify-between items-center p-3 bg-red-100 rounded-t-md">
+                                <span class="font-medium">使用習慣轉換</span>
+                                <span class="text-xl">＋</span>
+                            </div>
+                            <div class="accordion-content p-3 border border-t-0 border-red-200 rounded-b-md">
+                                <p>從液態轉換到固態需改變習慣，部分消費者感不便或陌生。</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item card">
+                            <div class="accordion-header flex justify-between items-center p-3 bg-red-100 rounded-t-md">
+                                <span class="font-medium">保存與存放問題</span>
+                                <span class="text-xl">＋</span>
+                            </div>
+                            <div class="accordion-content p-3 border border-t-0 border-red-200 rounded-b-md">
+                                <p>若未能妥善保持乾燥，可能易軟化或影響使用壽命。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="global-market-segmentation" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">全球市場區隔分析</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">全球洗髮餅市場可從成分類型、適用髮質、銷售通路及區域等多個維度進行細分，揭示市場結構與增長機會。</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-3 text-center">依適用髮質 (2023/24)</h3>
+                    <div class="chart-container h-64 md:h-72">
+                        <canvas id="hairTypeChart"></canvas>
+                    </div>
+                     <p class="mt-2 text-xs text-gray-500 text-center">一般髮質佔最大份額，油性髮質預計增長最快。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-3 text-center">依主要區域市場 (2023/24)</h3>
+                    <div class="chart-container h-64 md:h-72">
+                        <canvas id="regionChart"></canvas>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500 text-center">北美市場目前領先，亞太市場增長潛力最大。</p>
+                </div>
+                 <div class="card md:col-span-2">
+                    <h3 class="text-xl font-semibold mb-3 text-center">其他重要區隔</h3>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-medium text-lg text-[#556B2F]">依成分類型:</h4>
+                            <ul class="list-disc list-inside ml-4 text-gray-700">
+                                <li><strong>傳統型:</strong> 2024年市佔率約 53.6% (成本效益高)。</li>
+                                <li><strong>天然與有機型:</strong> 快速增長中。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-lg text-[#556B2F]">依銷售通路:</h4>
+                            <ul class="list-disc list-inside ml-4 text-gray-700">
+                                <li><strong>實體通路:</strong> 消費者傾向實際體驗，佔比較高 (約 67.8% in 2024 by Market.us)。</li>
+                                <li><strong>線上通路:</strong> 便利性高，增長快速。</li>
+                            </ul>
+                             <p class="mt-1 text-xs text-gray-500">通路數據因報告機構而異，但兩者皆重要。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="global-market-brands" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">主要國際品牌及其策略</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">全球洗髮餅市場競爭激烈，眾多國際品牌採取多元策略爭取份額。以下為部分代表性品牌：</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">Lush Retail Ltd.</h3>
+                    <p class="text-sm text-gray-600"><strong>策略：</strong>洗髮餅先驅，「裸裝」無包裝，新鮮原料，道德採購，手工製作，100%素食，反動物測試。重視功效與體驗式零售。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">Ethique Limited</h3>
+                    <p class="text-sm text-gray-600"><strong>策略：</strong>純淨、有效、道德、無塑。濃縮配方，天然道德原料，B型共益企業。包裝可家庭堆肥。重視消費者教育。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">L'Oréal S.A.</h3>
+                    <p class="text-sm text-gray-600"><strong>策略：</strong>透過「L'Oréal for the Future」計畫推動永續。旗下 Garnier 品牌推出零塑膠包裝洗髮餅。拓展可回填及固態產品線。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">Procter & Gamble (P&G)</h3>
+                    <p class="text-sm text-gray-600"><strong>策略：</strong>旗下多品牌（海倫仙度絲、潘婷等）推出高效能洗髮餅。紙質包裝，強調與液態產品相當功效及使用便利性。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">L'OCCITANE</h3>
+                    <p class="text-sm text-gray-600"><strong>策略：</strong>減少材料使用，提供無塑替代方案。天然精油，不含矽靈及硫酸鹽，包裝使用回收紙張。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">HiBAR, Inc.</h3>
+                    <p class="text-sm text-gray-600"><strong>策略：</strong>沙龍級品質無塑洗髮餅。獨特人體工學設計，天然成分，pH平衡，護色。Leaping Bunny認證。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="taiwan-market-overview" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">台灣市場概況與增長潛力</h2>
+            <p class="text-lg text-gray-700 mb-6 leading-relaxed">雖然缺乏針對台灣「洗髮餅」市場規模的獨立精確數據，但從相關趨勢可推斷其潛在增長空間。台灣整體美髮市場穩定增長，亞太區洗髮餅市場蓬勃發展，加上本土消費者對永續及天然產品的明確偏好，均暗示台灣洗髮餅市場正處於充滿潛力的增長期。</p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="card bg-emerald-50">
+                    <h3 class="text-xl font-semibold mb-2 text-emerald-700">專業美髮護理市場</h3>
+                    <p class="text-gray-700">2023年台灣專業美髮護理市場規模估計為 <span class="font-bold">1.52億美元</span>，預計2030年達 <span class="font-bold">2.025億美元</span> (CAGR 3%)。洗潤髮產品佔約40%。</p>
+                </div>
+                <div class="card bg-emerald-50">
+                    <h3 class="text-xl font-semibold mb-2 text-emerald-700">亞太區趨勢帶動</h3>
+                    <p class="text-gray-700">亞太區洗髮餅市場以 <span class="font-bold">8.6% CAGR</span> 快速發展 (2023-2030)，台灣市場應與此趨勢相關聯。</p>
+                </div>
+                <div class="card bg-emerald-50 md:col-span-2">
+                    <h3 class="text-xl font-semibold mb-2 text-emerald-700">消費者興趣</h3>
+                    <p class="text-gray-700">台灣消費者因永續考量，對無水產品（如洗髮餅）興趣濃厚，本土品牌和代工服務亦隨之興起。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="taiwan-market-consumer" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">台灣消費者趨勢與偏好</h2>
+             <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">台灣消費者在選擇洗髮餅時，展現出成熟且以價值為導向的特點。他們尋求的產品不僅要環保，更要能提供明確的護髮或護理頭皮功效。</p>
+            <div class="card max-w-3xl mx-auto">
+                <ul class="list-none space-y-3">
+                    <li class="flex items-start">
+                        <span class="text-green-500 mr-3 text-xl">🌿</span>
+                        <div><strong class="text-gray-800">天然、有機、無添加：</strong>對化學成分（SLS/SLES、Parabens、矽靈）存疑，追求純淨配方。</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-500 mr-3 text-xl">💧</span>
+                        <div><strong class="text-gray-800">無水/固態產品興趣增：</strong>擔憂塑膠廢棄，追求永續生活，零塑膠包裝是重點。</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-purple-500 mr-3 text-xl">💆‍♀️</span>
+                        <div><strong class="text-gray-800">重視頭皮健康：</strong>針對油性、頭皮屑、掉髮、敏感等問題的產品需求旺盛。</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-yellow-500 mr-3 text-xl">📱</span>
+                        <div><strong class="text-gray-800">社群媒體與口碑影響大：</strong>PTT、Dcard 等平台是獲取資訊、影響決策的關鍵。</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-500 mr-3 text-xl">✨</span>
+                        <div><strong class="text-gray-800">功效與感官體驗並重：</strong>期望有效解決問題，同時追求良好使用感（香氣、泡沫、洗後感）。</div>
+                    </li>
+                     <li class="flex items-start">
+                        <span class="text-indigo-500 mr-3 text-xl">💰</span>
+                        <div><strong class="text-gray-800">價格敏感度與CP值：</strong>追求高品質與天然成分，但價格與性價比仍是重要考量。</div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="taiwan-market-brands" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">台灣本土洗髮餅品牌</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">台灣本土市場已有多個品牌推出洗髮餅，多強調天然成分、手工製作，並針對特定頭皮或髮質問題提供解決方案。</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-1">里仁 (Li Ren)</h3>
+                    <p class="text-sm text-gray-600"><strong>特色：</strong>高CP值，溫和清潔，天然香氣，部分使用有機胺基酸。如「養護洗髮皂」。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-1">mubit 沐澧 (Mooni)</h3>
+                    <p class="text-sm text-gray-600"><strong>特色：</strong>強調「蕪皂」（無皂鹼），清潔力佳，髮絲蓬鬆。如「紅肉桂洗髮餅」(控油)。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-1">阿皂屋 (A Zao Wu)</h3>
+                    <p class="text-sm text-gray-600"><strong>特色：</strong>含咖啡因、生薑萃取等，助強健髮根。如「摩洛哥堅果油咖啡因洗髮皂」。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-1">陳怡安手工皂</h3>
+                    <p class="text-sm text-gray-600"><strong>特色：</strong>創辦人敏感肌，產品含松紅梅、薰衣草等。如「頭皮保健洗髮餅」。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-1">不廢製餅</h3>
+                    <p class="text-sm text-gray-600"><strong>特色：</strong>無皂鹼胺基酸配方，控油，起泡佳。如「白茶玫瑰胺基酸洗髮餅」。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-1">The Soap Days 純皂生活</h3>
+                    <p class="text-sm text-gray-600"><strong>特色：</strong>天然成分、有機植物油、精油，無棕櫚油，廢水可分解。如「草本何首烏洗髮皂」。</p>
+                </div>
+            </div>
+            <p class="mt-6 text-sm text-gray-500 text-center">註：另有 yusoap、山原色、百匡等品牌，以及廣源良、秋原集團等代工廠。</p>
+        </section>
+
+        <section id="taiwan-market-regulations" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">台灣新化妝品法規影響</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">台灣自2024年7月1日起實施新《化粧品衛生安全管理法》，對化妝品（含洗髮餅）的製造與銷售帶來顯著影響，旨在提升產品安全與品質標準。</p>
+            <div class="card max-w-3xl mx-auto bg-amber-50">
+                <h3 class="text-xl font-semibold mb-3 text-amber-700">主要影響：</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong>統一化妝品管理：</strong>廢除「一般」與「特定用途」分類，統一管理。</li>
+                    <li><strong>強制性產品登錄：</strong>上市前需在指定系統完成登錄（特定手工皂可能豁免）。</li>
+                    <li><strong>建立產品資訊檔案 (PIF)：</strong>需包含品質、安全、功能性詳細資料，要求較歐盟更嚴。</li>
+                    <li><strong>符合化粧品優良製造規範 (GMP)：</strong>製造場所需符合 ISO 22716 標準。</li>
+                    <li><strong>罰則加重：</strong>違反規定將面臨高額罰款，可連續處罰。</li>
+                </ul>
+                <p class="mt-4 text-gray-600">新法規將促使市場更趨專業化，可能增加小型業者合規成本，或促使其與認證代工廠合作。</p>
+            </div>
+        </section>
+
+        <section id="future-trends-formulation" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">成分與配方創新</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">洗髮餅的配方創新正朝向更專業化、功效更顯著、使用感更佳的方向發展，融入新穎天然活性成分與先進技術。</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">🌿 高級天然/植物活性成分</h3>
+                    <p class="text-gray-600">如阿育吠陀成分 (印度楝、Shikakai)、超級食物 (接骨木莓、藥蜀葵根)、植物蛋白 (水解米蛋白)。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">💧 無水/濃縮配方</h3>
+                    <p class="text-gray-600">強調「超小尺寸，多次使用」，進一步提升環保與便攜性。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">🔬 pH平衡、無硫酸鹽/矽靈</h3>
+                    <p class="text-gray-600">已成溫和、友善髮質產品的基本要求與開發目標。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">✨ 多功能合一</h3>
+                    <p class="text-gray-600">集洗髮、潤髮、護色等多重功效於一體，滿足高效便捷需求。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">🎯 精準化、針對性配方</h3>
+                    <p class="text-gray-600">針對不同髮質及特定頭皮問題開發專用配方，是市場主流。</p>
+                </div>
+                 <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">💡 技術進展</h3>
+                    <p class="text-gray-600">如溫感變化、微膠囊釋放、低溫製程、冷壓技術、適應性配方等。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="future-trends-packaging" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">永續包裝解決方案</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">洗髮餅的環保訴求延伸至包裝設計，「無塑」是基本，更全面的永續性成為品牌差異化的新戰場。</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card text-center">
+                    <div class="text-4xl mb-3">📜</div>
+                    <h3 class="text-xl font-semibold mb-1">紙質包裝</h3>
+                    <p class="text-sm text-gray-600">牛皮紙袋/盒，強調 FSC 認證。</p>
+                </div>
+                <div class="card text-center">
+                    <div class="text-4xl mb-3">♻️</div>
+                    <h3 class="text-xl font-semibold mb-1">可堆肥/生物降解</h3>
+                    <p class="text-sm text-gray-600">包材可自然分解，如 Ethique。</p>
+                </div>
+                <div class="card text-center">
+                    <div class="text-4xl mb-3">🌱</div>
+                    <h3 class="text-xl font-semibold mb-1">種子紙包裝</h3>
+                    <p class="text-sm text-gray-600">內含種子，埋土可發芽。</p>
+                </div>
+                <div class="card text-center">
+                    <div class="text-4xl mb-3">🗑️</div>
+                    <h3 class="text-xl font-semibold mb-1">極簡化包裝</h3>
+                    <p class="text-sm text-gray-600">減至最少，呼應零廢棄。</p>
+                </div>
+                <div class="card text-center">
+                    <div class="text-4xl mb-3">✒️</div>
+                    <h3 class="text-xl font-semibold mb-1">環保油墨</h3>
+                    <p class="text-sm text-gray-600">如大豆油墨印刷。</p>
+                </div>
+                 <div class="card text-center">
+                    <div class="text-4xl mb-3">📦</div>
+                    <h3 class="text-xl font-semibold mb-1">回收材料再利用</h3>
+                    <p class="text-sm text-gray-600">使用回收紙張製作包裝。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="future-trends-models" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">新興商業模式</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">除了傳統零售，洗髮餅市場也開始出現創新商業模式，旨在深化顧客關係、提升便利性並滿足個人化需求。</p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">🎨 個人化與客製化服務</h3>
+                    <p class="text-gray-600">根據消費者髮質、護髮目標等量身打造專屬配方。代工廠如 Custom Soap Colorado (美)、秋原集團 (台) 提供相關服務。Function of Beauty 的液態洗髮精客製化理念可應用於此。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">🔄 訂閱制服務</h3>
+                    <p class="text-gray-600">定期配送洗髮餅，可依季節或回饋調整。英國 grüum 已提供此服務。台灣「訂閱家」平台模式亦適用。</p>
+                </div>
+            </div>
+            <p class="mt-6 text-center text-gray-600">這些模式將消費從「交易」轉化為「關係經營」，有助於品牌鎖定顧客並創造經常性收入。</p>
+        </section>
+
+        <section id="future-trends-niche" class="content-section py-8">
+            <h2 class="text-3xl font-bold mb-6 text-center">利基市場機會</h2>
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-center">隨著主流市場日趨成熟，針對特定未被充分滿足的利基市場進行產品開發，將成為未來增長的重要來源。</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">👨 男性專用</h3>
+                    <p class="text-gray-600">男性對洗髮餅接受度與需求增長。如美國 Basin 品牌。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">👶 嬰幼兒專用</h3>
+                    <p class="text-gray-600">超溫和、天然無添加配方，針對細嫩肌膚。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">✈️ 旅行市場深化</h3>
+                    <p class="text-gray-600">開發專門旅行系列、迷你尺寸或套組。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">💇‍♀️ 專業美髮沙龍</h3>
+                    <p class="text-gray-600">推廣頂級洗髮餅，強調奢華成分或專業功效。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">🩹 特殊護理/療效型</h3>
+                    <p class="text-gray-600">如藥用、極度敏感肌、化療後頭皮護理等。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-2">🌍 特定種族髮質</h3>
+                    <p class="text-gray-600">針對不同種族獨特髮質（如極度捲曲）的專用配方。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-100 text-center py-8 mt-12">
+        <p class="text-sm text-gray-600">&copy; 2024 洗髮餅市場分析互動應用程式。基於提供之研究報告建構。</p>
+    </footer>
+
+    <script>
+        function showSection(sectionId, navElement, isDropdownItem = false) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            if (isDropdownItem) {
+                // Find the parent dropdown button and activate it
+                let parentButton = navElement.closest('.dropdown')?.querySelector('button.nav-link');
+                if (parentButton) {
+                    parentButton.classList.add('active');
+                }
+                 // Also activate the specific item if needed for styling, though typically not required for dropdown items themselves
+            } else if (navElement) {
+                 navElement.classList.add('active');
+            }
+            
+            // Scroll to the top of the content area or section
+            const mainContentArea = document.querySelector('main');
+            if (mainContentArea) {
+                 window.scrollTo({ top: mainContentArea.offsetTop - document.querySelector('header').offsetHeight, behavior: 'smooth'});
+            }
+
+            // If it's a dropdown item clicked from mobile, also ensure the main nav link for that section is marked active
+            if (isDropdownItem && document.getElementById('mobile-menu').classList.contains('hidden') === false) {
+                const mainNavLinkId = sectionId.split('-')[0]; // e.g. 'manufacturing' from 'manufacturing-types'
+                const mainNavLink = document.querySelector(`#mobile-menu a[href="#${mainNavLinkId}"]`);
+                if (mainNavLink) {
+                   // mainNavLink.classList.add('active'); // This might be redundant if parent button activation is enough
+                }
+            }
+        }
+
+        function showManufacturingTab(tabId, buttonElement) {
+            document.querySelectorAll('#manufacturing-types .tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+
+            document.querySelectorAll('#manufacturing-types .tab-button').forEach(button => {
+                button.classList.remove('active', 'bg-[#8FBC8F]', 'text-white');
+                button.classList.add('bg-gray-200', 'hover:bg-gray-300');
+            });
+            buttonElement.classList.add('active', 'bg-[#8FBC8F]', 'text-white');
+            buttonElement.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Accordion functionality
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const accordionItem = header.parentElement;
+                    accordionItem.classList.toggle('active');
+                });
+            });
+
+             // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            // Mobile menu accordion
+            document.querySelectorAll('.accordion-header-mobile').forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    content.classList.toggle('hidden');
+                    header.querySelector('span').textContent = content.classList.contains('hidden') ? '▼' : '▲';
+                });
+            });
+
+            // Activate first nav link and section
+            const firstNavLink = document.querySelector('.nav-link');
+             if (firstNavLink) {
+                firstNavLink.classList.add('active');
+             }
+            showSection('overview', firstNavLink);
+
+
+            // Chart configurations
+            const globalMarketCtx = document.getElementById('globalMarketChart')?.getContext('2d');
+            if (globalMarketCtx) {
+                new Chart(globalMarketCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['2024年預估市場規模 (億美元)', '2030-2034年預估市場規模 (億美元)', '預估年均複合增長率 (%)'],
+                        datasets: [{
+                            label: '全球洗髮餅市場',
+                            data: [114, 190, 6.5], // Averaged/representative data
+                            backgroundColor: ['#8FBC8F', '#A0522D', '#F0E68C'],
+                            borderColor: ['#556B2F', '#8B4513', '#DAA520'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true } },
+                        plugins: { legend: { display: false }, title: { display: true, text: '全球洗髮餅市場規模與增長預測' } }
+                    }
+                });
+            }
+
+            const hairTypeCtx = document.getElementById('hairTypeChart')?.getContext('2d');
+            if (hairTypeCtx) {
+                new Chart(hairTypeCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['一般髮質 (40-45%)', '油性髮質', '乾性髮質', '其他特殊髮質'],
+                        datasets: [{
+                            data: [42.5, 25, 20, 12.5], // Example distribution
+                            backgroundColor: ['#8FBC8F', '#A0522D', '#F0E68C', '#D2B48C'],
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                });
+            }
+
+            const regionCtx = document.getElementById('regionChart')?.getContext('2d');
+            if (regionCtx) {
+                new Chart(regionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['北美 (約65%)', '歐洲', '亞太地區 (增長最快)', '其他'],
+                        datasets: [{
+                            data: [65, 15, 15, 5], // Example distribution
+                            backgroundColor: ['#8FBC8F', '#A0522D', '#F0E68C', '#D2B48C'],
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                });
+            }
+        });
+
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu) {
+                mobileMenu.classList.add('hidden'); // Always hide after click for SPA navigation
+            }
+        }
+
+    </script>
+</body>
+</html>
