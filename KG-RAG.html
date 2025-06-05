@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>製造業 KG-RAG 解決方案互動式瀏覽器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate Blue & Warm Neutrals -->
+    <!-- Application Structure Plan: The application is designed as a single-page dashboard to facilitate easy exploration and comparison of KG-RAG solutions. The structure deviates from the linear report format to a user-centric flow: 1. **Hero Section** for a quick overview. 2. **"Why KG-RAG?"** to provide foundational context with collapsible sections. 3. **"Solution Explorer"** as the core interactive element, using filterable cards instead of a static table to allow users to focus on relevant solutions. 4. **"Comparison Matrix"** with a dynamic radar chart to visually compare selected solutions, making complex trade-offs intuitive. 5. **"Decision Guide"** which transforms static recommendations into an interactive questionnaire, providing personalized suggestions. This task-oriented structure prioritizes user discovery and decision-making over passive reading. -->
+    <!-- Visualization & Content Choices: 
+        - **Solution List -> Interactive Cards (HTML/CSS/JS):** To present a high-level overview of each solution without overwhelming the user. Interaction: Click to see details in a modal, check to add to comparison. Justification: More scannable and interactive than a long table.
+        - **Comparative Analysis (Table 2) -> Radar Chart (Chart.js):** To compare multiple solutions across several qualitative metrics (e.g., data handling, reasoning, maturity). Interaction: Users select solutions via checkboxes to dynamically update the chart. Justification: Radar charts excel at showing multi-dimensional strengths and weaknesses in a compact visual format.
+        - **Use Cases & Data Types -> Tag-based Filtering (JS):** To allow users to narrow down the list of solutions based on their specific needs. Interaction: Clicking a tag filters the visible solution cards. Justification: Provides a direct path for users to find solutions relevant to their context.
+        - **Strategic Advice -> Interactive Questionnaire (JS):** To convert textual guidance into an actionable tool. Interaction: Users answer multiple-choice questions, and the application suggests the most suitable solutions. Justification: Increases engagement and provides personalized, actionable insights.
+        - **CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .nav-link {
+            @apply px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors;
+        }
+        .nav-link.active {
+            @apply bg-slate-900 text-white;
+        }
+        .card {
+            @apply bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300;
+        }
+        .tag {
+            @apply inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full;
+        }
+        .btn {
+            @apply px-4 py-2 bg-slate-700 text-white text-sm font-medium rounded-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors;
+        }
+        .modal-overlay {
+            @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50;
+        }
+        .modal-content {
+            @apply bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <!-- Header -->
+    <header class="bg-slate-800 shadow-md sticky top-0 z-40">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-white font-bold text-xl">KG-RAG 方案瀏覽器</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#hero" class="nav-link">首頁</a>
+                        <a href="#why-kg-rag" class="nav-link">核心概念</a>
+                        <a href="#explorer" class="nav-link">方案瀏覽</a>
+                        <a href="#comparison" class="nav-link">互動比較</a>
+                        <a href="#guide" class="nav-link">決策指南</a>
+                        <a href="#trends" class="nav-link">未來趨勢</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="bg-white">
+            <div class="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
+                    <span class="block">探索製造業的</span>
+                    <span class="block text-slate-600">知識圖譜RAG解決方案</span>
+                </h1>
+                <p class="mt-6 max-w-lg mx-auto text-xl text-slate-500">
+                    本工具旨在將複雜的KG-RAG技術報告轉化為一個互動式的探索平台，助您快速理解、比較並選擇最適合您製造業場景的開源解決方案。
+                </p>
+            </div>
+        </section>
+
+        <!-- Why KG-RAG Section -->
+        <section id="why-kg-rag" class="py-16 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900">核心概念：為何選擇 KG-RAG？</h2>
+                    <p class="mt-4 text-lg text-slate-600">了解KG-RAG相較於傳統RAG的優勢，及其在製造業的潛力與挑戰。</p>
+                </div>
+                <div class="mt-12 space-y-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-2">🚀 KG-RAG 的關鍵優勢</h3>
+                        <p class="text-slate-600">傳統RAG依賴語義相似度檢索孤立文本，而KG-RAG利用知識圖譜中的實體關係，提供更精準、具上下文的答案。這對於處理製程複雜、數據互聯的製造業至關重要，能夠：</p>
+                        <ul class="mt-4 list-disc list-inside space-y-2 text-slate-600">
+                            <li><strong>強化預測性維護：</strong> 關聯組件、感測器讀數和維護歷史，進行更深層的因果推斷。</li>
+                            <li><strong>優化供應鏈：</strong> 理解複雜的供應商網絡、物料依賴和物流限制。</li>
+                            <li><strong>提升品質控制：</strong> 關聯生產參數、材料特性和測試結果，識別缺陷根源。</li>
+                            <li><strong>實現知識傳承：</strong> 將專家經驗和技術手冊轉化為可操作的AI知識庫。</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h3 class="text-xl font-semibold mb-2">🚧 實施挑戰</h3>
+                         <p class="text-slate-600">儘管前景廣闊，但在製造業部署KG-RAG仍面臨挑戰：</p>
+                        <ul class="mt-4 list-disc list-inside space-y-2 text-slate-600">
+                            <li><strong>數據來源多樣且孤立：</strong> 整合來自ERP、MES、感測器、CAD文件等異構數據。</li>
+                            <li><strong>知識圖譜構建複雜：</strong> 設計有效的模式(schema)並持續更新，需要大量精力。</li>
+                            <li><strong>即時處理需求：</strong> 製造場景（如即時故障檢測）對回應延遲有嚴格要求。</li>
+                            <li><strong>可擴展性與成本：</strong> 巨大的知識圖譜需要可擴展的圖數據庫和高效的查詢機制。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solution Explorer -->
+        <section id="explorer" class="py-16 sm:py-24 bg-slate-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900">方案瀏覽與篩選</h2>
+                    <p class="mt-4 text-lg text-slate-600">點擊標籤進行篩選，或點擊卡片查看各方案的詳細資訊。</p>
+                </div>
+                <div id="filter-tags" class="mt-8 flex flex-wrap justify-center gap-2">
+                </div>
+                <div id="solution-cards-container" class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <!-- Solution cards will be injected here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparison Matrix -->
+        <section id="comparison" class="py-16 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="lg:text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900">互動比較矩陣</h2>
+                    <p class="mt-4 max-w-2xl text-lg text-slate-600 lg:mx-auto">
+                        在上方「方案瀏覽」區塊勾選2至4個方案，即可在此處透過雷達圖進行視覺化比較。
+                    </p>
+                </div>
+                <div class="mt-12">
+                    <div class="chart-container mx-auto">
+                        <canvas id="comparisonRadarChart"></canvas>
+                    </div>
+                    <p id="comparison-placeholder" class="text-center text-slate-500 mt-8">請先選擇方案以生成比較圖表。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Decision Guide -->
+        <section id="guide" class="py-16 sm:py-24 bg-slate-100">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900">您的專屬決策指南</h2>
+                    <p class="mt-4 text-lg text-slate-600">回答以下問題，我們將根據您的需求，推薦最適合的KG-RAG解決方案。</p>
+                </div>
+                <div class="mt-12 bg-white p-8 rounded-xl shadow-md space-y-6">
+                    <div>
+                        <label class="font-semibold text-slate-700">1. 您的主要數據來源是什麼？</label>
+                        <select id="guide-q1" class="mt-2 block w-full p-2 border border-slate-300 rounded-md">
+                            <option value="text">大量非結構化文本 (手冊、報告)</option>
+                            <option value="mixed">混合數據 (結構化數據庫 + 文本)</option>
+                            <option value="multimodal">多模態數據 (包含圖像、音訊)</option>
+                            <option value="tools">工具/流程定義</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="font-semibold text-slate-700">2. 您對推理能力的複雜度要求是？</label>
+                        <select id="guide-q2" class="mt-2 block w-full p-2 border border-slate-300 rounded-md">
+                            <option value="simple">簡單的問答與關係鏈接</option>
+                            <option value="multihop">複雜的多跳推理與關係發現</option>
+                            <option value="logical">嚴格的邏輯演繹與規則推理</option>
+                        </select>
+                    </div>
+                     <div>
+                        <label class="font-semibold text-slate-700">3. 您對開發框架的偏好是？</label>
+                        <select id="guide-q3" class="mt-2 block w-full p-2 border border-slate-300 rounded-md">
+                            <option value="platform">希望有UI的端到端平台</option>
+                            <option value="flexible">需要高度靈活、模組化的框架</option>
+                            <option value="specialized">尋找針對特定任務的最佳化工具</option>
+                            <option value="enterprise">偏好有企業級支援的方案</option>
+                        </select>
+                    </div>
+                    <div class="text-center">
+                        <button id="guide-submit" class="btn">查看推薦結果</button>
+                    </div>
+                </div>
+                <div id="guide-results" class="mt-8">
+                </div>
+            </div>
+        </section>
+
+        <!-- Future Trends -->
+        <section id="trends" class="py-16 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-slate-900">未來趨勢展望</h2>
+                    <p class="mt-4 text-lg text-slate-600">KG-RAG將持續創新，並對智慧製造產生深遠影響。</p>
+                </div>
+                <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <div class="p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="font-semibold text-xl">自動化與多模態</h3>
+                        <p class="mt-2 text-slate-600">LLM驅動的知識圖譜自動構建與維護能力將更強，並能整合圖像、影片、CAD文件等資訊。</p>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="font-semibold text-xl">時序與可解釋性</h3>
+                        <p class="mt-2 text-slate-600">對時變數據的推理能力將提升，同時提供可視化的推理路徑以增強信任度，這對高風險決策至關重要。</p>
+                    </div>
+                    <div class="p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="font-semibold text-xl">數位分身與超級自動化</h3>
+                        <p class="mt-2 text-slate-600">KG-RAG將成為數位分身的語義骨幹，並驅動智能體在生產規劃、資源分配上實現更自主的決策。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <!-- Modal -->
+    <div id="solutionModal" class="modal-overlay hidden">
+        <div id="modal-inner" class="modal-content">
+           <!-- Modal content will be injected here -->
+        </div>
+    </div>
+
+    <footer class="bg-slate-800">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-slate-400 text-sm">
+            <p>本互動式報告基於提供的「製造業知識圖譜RAG方案評估」文件生成。</p>
+            <p>&copy; 2025 AI-Powered Interactive Report Generator</p>
+        </div>
+    </footer>
+
+
+    <script>
+        const solutionsData = [
+            {
+                id: 'ms_graphrag', name: 'Microsoft GraphRAG',
+                focus: '大型私有數據集分析',
+                tags: ['企業級', '預測性維護', '供應鏈管理', '文本數據'],
+                summary: '模組化、基於圖的RAG系統，旨在使用LLM從非結構化文本中提取結構化數據，並增強LLM在私有數據上的推理能力。',
+                details: {
+                    architecture: '索引管線提取實體、關係、關鍵聲明，並生成社群報告。查詢可透過全域、區域搜索進行。',
+                    use_cases: '預測性維護、供應鏈管理、大型複雜私有數據集（如公司內部文件、報告）的綜合洞察。',
+                    pros: '處理複雜性、提供整體洞察、擁有Azure企業級支持。',
+                    cons: '索引過程計算資源和LLM調用成本可能較高，與現有結構化數據庫的整合細節尚不明確。',
+                },
+                scores: { data: 3, reasoning: 4, automation: 2, maturity: 5, community: 4 }
+            },
+            {
+                id: 'kag', name: 'KAG (OpenSPG)',
+                focus: '邏輯推理與問答',
+                tags: ['邏輯推理', '結構化數據', '合規性檢查', '故障診斷'],
+                summary: '基於OpenSPG引擎和大型語言模型的邏輯形式引導的推理與檢索框架。',
+                details: {
+                    architecture: '利用OpenSPG（基於模式的屬性圖）引擎，將自然語言問題轉化為結合語言和符號（邏輯形式）的問題解決過程。',
+                    use_cases: '需要高精度並基於明確定義的領域知識進行推理的應用，如合規性檢查、基於規則的複雜故障診斷、從結構化數據（如MES/ERP）生成報告。',
+                    pros: '強大的邏輯推理能力，高精確性，能有效處理結構化數據和專家規則，社群活躍。',
+                    cons: 'OpenSPG和邏輯形式表示可能導致較陡峭的學習曲線。',
+                },
+                scores: { data: 5, reasoning: 5, automation: 3, maturity: 4, community: 5 }
+            },
+            {
+                id: 'ragflow', name: 'RAGFlow',
+                focus: '深度文檔理解',
+                tags: ['多格式文檔', '易用性', '平台化', '文本數據'],
+                summary: '一個基於深度文檔理解的開源RAG引擎，支持多種數據格式和可選的知識圖譜增強。',
+                details: {
+                    architecture: '支持多種數據格式（Word, Excel, PDF, 圖像等）的處理，具有模板化分塊、可追溯引用等特性。知識圖譜構建是可選步驟。',
+                    use_cases: '跨多種格式文檔的問答系統，從複雜製造流程或產品資訊中提取知識。其用例明確提及「製造業與工業4.0」。',
+                    pros: '處理多樣化文檔格式能力強，提供UI，易用性高，社群非常活躍。',
+                    cons: 'KG功能相對較新，且依賴外部提示（如GraphRAG）來構建知識圖譜。',
+                },
+                scores: { data: 4, reasoning: 3, automation: 2, maturity: 4, community: 5 }
+            },
+            {
+                id: 'gfm_rag', name: 'GFM-RAG',
+                focus: 'GNN增強檢索',
+                tags: ['多跳推理', 'GNN', '學術前沿', '文本數據'],
+                summary: '首個由圖基礎模型（GFM，一種GNN）驅動的RAG管線，專為高效多跳推理設計。',
+                details: {
+                    architecture: '從文件中構建一個KG-index，然後一個預訓練的GFM檢索器在此索引上進行推理，以獲取相關文件供LLM生成內容。',
+                    use_cases: '需要綜合考慮跨越多個文件或數據孤島的多個互聯因素的複雜問題診斷，如關聯感測器數據模式、維護日誌和設計規格來診斷機器故障。',
+                    pros: '高效的單步多跳檢索，無需微調即可泛化至未見數據集，可解釋推理路徑。',
+                    cons: 'KG-index的構建仍依賴可能引入噪聲的OpenIE。GFM模型本身較為複雜。',
+                },
+                scores: { data: 3, reasoning: 5, automation: 3, maturity: 2, community: 2 }
+            },
+            {
+                id: 'llama_index', name: 'LlamaIndex (KG)',
+                focus: '通用RAG框架',
+                tags: ['靈活性', '生態系', '定制化', '結構化數據', '文本數據'],
+                summary: '一個用於LLM應用的綜合數據框架，提供強大的模組來構建定制化的KG-RAG解決方案。',
+                details: {
+                    architecture: '提供`KnowledgeGraphIndex`從文件中構建知識圖譜，或利用`KnowledgeGraphRAGQueryEngine`連接現有圖數據庫（如NebulaGraph）。支持NL2Cypher。',
+                    use_cases: '在多樣化的製造數據（技術文檔、BOM、維護日誌）之上構建定制化的RAG解決方案，創建對話式界面查詢複雜知識圖譜。',
+                    pros: '高度靈活和模組化，生態系統強大，社群極大，支持多種圖數據庫。',
+                    cons: '作為通用框架，其針對KG-RAG的特定優化可能不如專用解決方案深入。效果依賴LLM和提示工程。',
+                },
+                scores: { data: 4, reasoning: 4, automation: 4, maturity: 5, community: 5 }
+            },
+            {
+                id: 'rakg', name: 'RAKG',
+                focus: '知識圖譜構建',
+                tags: ['KGC', '高精度', '文本數據', '學術前沿'],
+                summary: '專注於從文件中自動化構建高質量知識圖譜的框架，其方法旨在解決LLM長上下文遺忘問題。',
+                details: {
+                    architecture: '從文本中提取「預實體」，並將這些預實體作為RAG查詢來整合上下文，以建立關係網絡，最終形成知識圖譜。',
+                    use_cases: '從大量的文本型製造業文檔（如技術手冊、SOP、品質報告）中提取知識，為故障排除、員工培訓等應用建立高質量知識庫。',
+                    pros: '在知識圖譜構建方面準確率高，產生的知識圖譜實體密度和關係豐富度高。',
+                    cons: '主要集中於知識圖譜構建，RAG應用屬於下游。對非文本數據的處理能力未詳細說明。',
+                },
+                scores: { data: 3, reasoning: 3, automation: 2, maturity: 2, community: 1 }
+            },
+            {
+                id: 'txtai', name: 'txtai 7.0',
+                focus: '嵌入式數據庫與RAG',
+                tags: ['多模態數據', '嵌入式', '語義搜索', '文本數據'],
+                summary: '一個用於語義搜索和LLM工作流程的一體化嵌入式數據庫，新版本通過圖路徑遍歷增強了RAG功能。',
+                details: {
+                    architecture: '核心是多模態嵌入數據庫。高級RAG功能使用圖路徑遍歷從內部構建的知識圖譜中收集更全面的上下文。',
+                    use_cases: '從多樣化的製造數據（技術文檔、零件/缺陷圖像、機器音訊日誌）中構建知識庫。探索複雜關係，如從最終產品追溯缺陷。',
+                    pros: '能處理多模態數據（文本、圖像、音訊），功能多樣，內建嵌入式數據庫。',
+                    cons: '知識圖譜功能非其核心，可能不如專用的KG框架深入。',
+                },
+                scores: { data: 5, reasoning: 3, automation: 2, maturity: 4, community: 5 }
+            },
+            {
+                id: 'tool_fusion', name: 'GraphRAG-Tool Fusion',
+                focus: '工具流程編排',
+                tags: ['工具自動化', '流程管理', '智能體', '學術前沿'],
+                summary: '一種結合向量搜索與圖遍歷的方法，用於從預定義的工具知識圖譜中檢索相關工具及其依賴關係。',
+                details: {
+                    architecture: '首先進行向量搜索以檢索初始相關工具，然後進行圖遍歷以檢索每個工具的嵌套依賴關係，供智能體使用。',
+                    use_cases: '自動化涉及一系列具有相互依賴關係的操作、軟體工具或機器人動作的複雜製造流程。管理和執行自動化生產線或維護程序中的操作序列。',
+                    pros: '顯著提高了具有依賴關係的工具的檢索準確性，非常適用於智能體系統。',
+                    cons: '依賴一個高質量、預先定義好的工具知識圖譜。研究中的工具為虛構。',
+                },
+                scores: { data: 2, reasoning: 4, automation: 5, maturity: 1, community: 1 }
+            },
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const solutionCardsContainer = document.getElementById('solution-cards-container');
+            const filterTagsContainer = document.getElementById('filter-tags');
+            const modal = document.getElementById('solutionModal');
+            const modalInner = document.getElementById('modal-inner');
+            const comparisonPlaceholder = document.getElementById('comparison-placeholder');
+            const guideSubmitBtn = document.getElementById('guide-submit');
+            const guideResultsContainer = document.getElementById('guide-results');
+
+            let activeFilters = new Set();
+            let selectedForComparison = new Set();
+            let radarChart = null;
+
+            const scoreLabels = {
+                data: '數據處理能力',
+                reasoning: '複雜推理能力',
+                automation: '流程自動化',
+                maturity: '成熟度',
+                community: '社群與生態'
+            };
+
+            const allTags = new Set();
+            solutionsData.forEach(s => s.tags.forEach(t => allTags.add(t)));
+
+            function renderFilterTags() {
+                filterTagsContainer.innerHTML = `<button class="tag-btn active" data-tag="all">全部</button>` +
+                    [...allTags].map(tag => `<button class="tag-btn" data-tag="${tag}">${tag}</button>`).join('');
+            }
+
+            function renderCards() {
+                const filteredSolutions = solutionsData.filter(s =>
+                    activeFilters.size === 0 || s.tags.some(t => activeFilters.has(t))
+                );
+
+                solutionCardsContainer.innerHTML = filteredSolutions.map(s => `
+                    <div class="card p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-xl font-bold text-slate-800">${s.name}</h3>
+                                 <div class="flex items-center space-x-2">
+                                     <input type="checkbox" id="compare-${s.id}" data-id="${s.id}" class="compare-checkbox h-4 w-4 rounded border-gray-300 text-slate-600 focus:ring-slate-500" ${selectedForComparison.has(s.id) ? 'checked' : ''}>
+                                     <label for="compare-${s.id}" class="text-sm text-slate-600">比較</label>
+                                 </div>
+                            </div>
+                            <p class="text-sm text-slate-500 font-semibold mt-1">${s.focus}</p>
+                            <p class="mt-4 text-slate-600 text-sm">${s.summary}</p>
+                            <div class="mt-4">
+                                ${s.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                           <button class="btn w-full details-btn" data-id="${s.id}">查看詳情</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function showModal(solutionId) {
+                const s = solutionsData.find(sol => sol.id === solutionId);
+                if (!s) return;
+                
+                modalInner.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold">${s.name}</h2>
+                        <button id="closeModalBtn" class="text-slate-500 hover:text-slate-800">&times;</button>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mt-4">核心架構</h4>
+                        <p class="text-slate-600">${s.details.architecture}</p>
+                        <h4 class="font-semibold mt-4">潛在製造業用例</h4>
+                        <p class="text-slate-600">${s.details.use_cases}</p>
+                        <h4 class="font-semibold mt-4">優勢</h4>
+                        <p class="text-slate-600">${s.details.pros}</p>
+                        <h4 class="font-semibold mt-4">挑戰/弱點</h4>
+                        <p class="text-slate-600">${s.details.cons}</p>
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+                document.getElementById('closeModalBtn').addEventListener('click', () => modal.classList.add('hidden'));
+            }
+            
+            function updateComparisonChart() {
+                const selectedSolutions = solutionsData.filter(s => selectedForComparison.has(s.id));
+
+                if (selectedSolutions.length < 2 || selectedSolutions.length > 4) {
+                    if (radarChart) {
+                        radarChart.destroy();
+                        radarChart = null;
+                    }
+                    comparisonPlaceholder.textContent = selectedSolutions.length > 4 ? "最多只能比較 4 個方案。" : "請至少選擇 2 個方案進行比較。";
+                    comparisonPlaceholder.classList.remove('hidden');
+                    return;
+                }
+
+                comparisonPlaceholder.classList.add('hidden');
+
+                const labels = Object.values(scoreLabels);
+                const datasets = selectedSolutions.map((s, index) => {
+                    const colors = [
+                        'rgba(59, 130, 246, 0.4)', // blue-500
+                        'rgba(239, 68, 68, 0.4)',  // red-500
+                        'rgba(22, 163, 74, 0.4)',  // green-600
+                        'rgba(249, 115, 22, 0.4)'  // orange-500
+                    ];
+                     const borderColors = [
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(22, 163, 74, 1)',
+                        'rgba(249, 115, 22, 1)'
+                    ];
+                    return {
+                        label: s.name,
+                        data: Object.keys(scoreLabels).map(key => s.scores[key]),
+                        backgroundColor: colors[index],
+                        borderColor: borderColors[index],
+                        pointBackgroundColor: borderColors[index],
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: borderColors[index]
+                    };
+                });
+
+                if (radarChart) {
+                    radarChart.data.labels = labels;
+                    radarChart.data.datasets = datasets;
+                    radarChart.update();
+                } else {
+                    const ctx = document.getElementById('comparisonRadarChart').getContext('2d');
+                    radarChart = new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: labels,
+                            datasets: datasets
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                                    grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                    pointLabels: { font: { size: 12 }, color: '#475569'},
+                                    suggestedMin: 0,
+                                    suggestedMax: 5,
+                                    ticks: {
+                                        stepSize: 1,
+                                        backdropColor: 'rgba(255, 255, 255, 0.75)'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+            
+            function calculateGuideRecommendations() {
+                const q1 = document.getElementById('guide-q1').value; // data source
+                const q2 = document.getElementById('guide-q2').value; // reasoning complexity
+                const q3 = document.getElementById('guide-q3').value; // framework preference
+
+                const recommendations = solutionsData.map(s => {
+                    let score = 0;
+                    // Q1 Scoring
+                    if (q1 === 'text' && s.tags.includes('文本數據')) score += 3;
+                    if (q1 === 'mixed' && s.tags.includes('結構化數據')) score += 3;
+                    if (q1 === 'multimodal' && s.tags.includes('多模態數據')) score += 3;
+                    if (q1 === 'tools' && s.tags.includes('工具自動化')) score += 3;
+
+                    // Q2 Scoring
+                    if (q2 === 'simple' && s.scores.reasoning <= 3) score += 2;
+                    if (q2 === 'multihop' && s.scores.reasoning >= 4) score += 2;
+                    if (q2 === 'logical' && s.tags.includes('邏輯推理')) score += 3;
+                    
+                    // Q3 Scoring
+                    if (q3 === 'platform' && s.tags.includes('平台化')) score += 3;
+                    if (q3 === 'flexible' && s.tags.includes('靈活性')) score += 3;
+                    if (q3 === 'specialized' && s.tags.includes('學術前沿')) score += 2;
+                    if (q3 === 'enterprise' && s.tags.includes('企業級')) score += 3;
+                    
+                    return { ...s, matchScore: score };
+                }).sort((a, b) => b.matchScore - a.matchScore);
+
+                return recommendations.slice(0, 3);
+            }
+            
+            function renderGuideResults() {
+                const topResults = calculateGuideRecommendations();
+                guideResultsContainer.innerHTML = `
+                    <h3 class="text-xl font-semibold text-center mb-4">為您推薦的方案</h3>
+                    <div class="space-y-4">
+                        ${topResults.map(s => `
+                            <div class="card p-4">
+                                <h4 class="font-bold text-lg">${s.name}</h4>
+                                <p class="text-sm text-slate-600 mt-1">${s.summary}</p>
+                                <button class="mt-2 text-sm text-slate-700 font-semibold hover:underline details-btn" data-id="${s.id}">查看詳情 &rarr;</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            filterTagsContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('tag-btn')) {
+                    const tag = e.target.dataset.tag;
+
+                    document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    if (tag === 'all') {
+                        activeFilters.clear();
+                    } else {
+                        activeFilters.clear();
+                        activeFilters.add(tag);
+                    }
+                    renderCards();
+                }
+            });
+            
+            solutionCardsContainer.addEventListener('click', e => {
+                if (e.target.classList.contains('details-btn')) {
+                    showModal(e.target.dataset.id);
+                }
+                if (e.target.classList.contains('compare-checkbox')) {
+                    const id = e.target.dataset.id;
+                    if (e.target.checked) {
+                        selectedForComparison.add(id);
+                    } else {
+                        selectedForComparison.delete(id);
+                    }
+                    updateComparisonChart();
+                }
+            });
+            
+            guideSubmitBtn.addEventListener('click', renderGuideResults);
+            
+            modal.addEventListener('click', (e) => {
+                if(e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+
+            // Initial render
+            renderFilterTags();
+            renderCards();
+            updateComparisonChart();
+        });
+    </script>
+</body>
+</html>
