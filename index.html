@@ -15,6 +15,8 @@
       flex-direction: column;
       align-items: center;
       padding: 40px 20px;
+      min-height: 100vh; /* 確保內容至少佔滿整個視窗高度 */
+      box-sizing: border-box;
     }
 
     h1 {
@@ -39,6 +41,14 @@
       max-width: 1000px;
     }
 
+    /* --- CSS 修改部分 --- */
+
+    /* 新增：讓包住卡片的連結沒有底線，並繼承文字顏色 */
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+    }
+
     .card {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid #00ffff55;
@@ -46,27 +56,31 @@
       padding: 25px;
       text-align: center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      height: 100%; /* 讓卡片在網格中高度一致 */
+      display: flex; /* 使用 flexbox 來垂直置中 */
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box; /* 確保 padding 不會影響總高度 */
     }
 
+    /* 滑鼠懸停效果不變，現在整個卡片都有此效果 */
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 0 15px #00ffffaa;
     }
-
-    .card a {
-      display: block;
-      font-size: 1.2em;
-      color: #00ffff;
-      text-decoration: none;
-      margin-top: 10px;
+    
+    /* 修改：直接設定卡片內文字的樣式 */
+    .card div {
+        font-size: 1.2em;
+        font-weight: 500;
+        /* 保持白色以和標題的青色做區隔，提升可讀性 */
     }
 
-    .card a:hover {
-      text-decoration: underline;
-    }
+    /* 移除：舊的 .card a 和 .card a:hover 樣式已被刪除，因為不再需要 */
 
     footer {
-      margin-top: 60px;
+      margin-top: auto; /* 將 footer 推到頁面底部 */
+      padding-top: 60px;
       font-size: 0.9em;
       color: #999;
     }
@@ -77,18 +91,23 @@
   <p>Explore Knowledge Academy</p>
 
   <div class="card-grid">
-    <div class="card">
-      <div>SRV 半年吉他手計畫</div>
-      <a href="SRV_lesson.html" target="_blank">Check it</a>
-    </div>
-    <div class="card">
-      <div>KG-RAG Solution </div>
-      <a href="KG-RAG.html" target="_blank">Check it</a>
-    </div>
-    <div class="card">
-      <div>LLM for Root Cause Analysis in Manufacturing Quality</div>
-      <a href="LLM for Root Cause Analysis in Manufacturing Quality.html" target="_blank">Check it</a>
-    </div>
+    <a href="SRV_lesson.html" target="_blank" class="card-link">
+      <div class="card">
+        <div>SRV 半年吉他手計畫</div>
+      </div>
+    </a>
+
+    <a href="KG-RAG.html" target="_blank" class="card-link">
+      <div class="card">
+        <div>KG-RAG Solution</div>
+      </div>
+    </a>
+
+    <a href="LLM for Root Cause Analysis in Manufacturing Quality.html" target="_blank" class="card-link">
+      <div class="card">
+        <div>LLM for Root Cause Analysis in Manufacturing Quality</div>
+      </div>
+    </a>
   </div>
 
   <footer>
