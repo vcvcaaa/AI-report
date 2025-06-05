@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CNT Aqueous Dispersion - Product Showcase</title>
+    <style>
+        /* --- Google Fonts --- */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+
+        /* --- Global Styles & Dark Theme --- */
+        :root {
+            --primary-color: #00BFFF; /* DeepSkyBlue - a vibrant tech blue */
+            --background-color: #121212;
+            --surface-color: #1E1E1E;
+            --text-color: #E0E0E0;
+            --text-secondary-color: #A0A0A0;
+            --border-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 0;
+        }
+
+        h1, h2, h3 {
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-color);
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: var(--text-secondary-color);
+            margin-bottom: 20px;
+        }
+
+        /* --- Language Switcher --- */
+        .lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            background: var(--surface-color);
+            padding: 8px 12px;
+            border-radius: 20px;
+            z-index: 1000;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .lang-switcher button {
+            background: none;
+            border: none;
+            color: var(--text-secondary-color);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0 8px;
+            transition: color 0.3s ease;
+        }
+
+        .lang-switcher button.active {
+            color: var(--primary-color);
+        }
+
+        .lang-switcher span {
+            color: var(--border-color);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), url('https://images.unsplash.com/photo-1581092921462-63503a5897cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzOTAwNXwwfDF8c2VhcmNofDEzfHxtYXRlcmlhbCUyMHNjaWVuY2V8ZW58MHx8fHwxNzE3NjQzNDM0fDA&ixlib=rb-4.0.3&q=80&w=1080') no-repeat center center/cover;
+            padding: 0 20px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: var(--text-color);
+            font-weight: 300;
+        }
+
+        /* --- Advantages Section --- */
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .advantage-card {
+            background-color: var(--surface-color);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .advantage-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 191, 255, 0.1);
+        }
+
+        .advantage-card .icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .advantage-card h3 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        /* --- Performance Section --- */
+        .performance-section {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .performance-text { flex: 1; min-width: 300px; }
+        .performance-images { flex: 1; min-width: 300px; display: flex; gap: 20px; align-items: center;}
+
+        .performance-images img {
+            width: 50%;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        
+        .img-caption {
+            text-align: center;
+            margin-top: 10px;
+            color: var(--text-secondary-color);
+            font-size: 0.9rem;
+        }
+        
+        .img-caption strong {
+            color: var(--text-color);
+        }
+
+        /* --- Data Table Section --- */
+        .data-table-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            flex-wrap: wrap-reverse;
+        }
+        .data-table-container {
+            background-color: var(--surface-color);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            flex: 1.2;
+            min-width: 320px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 18px 25px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        thead th {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            background-color: rgba(0, 191, 255, 0.05);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .table-image {
+            flex: 0.8;
+            min-width: 280px;
+        }
+
+        .table-image img {
+            width: 100%;
+            border-radius: 12px;
+        }
+        
+        /* --- Spec Details Section --- */
+        .spec-details {
+            margin-top: 60px;
+        }
+        
+        .spec-details dl {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .spec-details dl {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .spec-details dt {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .spec-details dd {
+            font-size: 1rem;
+            color: var(--text-secondary-color);
+            padding-left: 10px;
+            border-left: 2px solid var(--border-color);
+        }
+                /* 新增這段CSS來處理圖片和文字的內部對齊 */
+        .performance-images figure {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px; /* 可選：在圖片和文字之間增加一些間距 */
+        }
+
+
+        /* --- CORRECTED Language hiding logic --- */
+        span[lang="en"], span[lang="zh-TW"] { display: none; }
+        html[lang="en"] span[lang="en"] { display: revert; }
+        html[lang="zh-TW"] span[lang="zh-TW"] { display: revert; }
+        
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            h2 { font-size: 2rem; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero-content p { font-size: 1.2rem; }
+            .container { padding: 60px 0; }
+            .performance-section, .data-table-wrapper {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lang-switcher">
+        <button id="lang-en">EN</button>
+        <span>|</span>
+        <button id="lang-zh" class="active">繁中</button>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>
+                <span lang="en">The Future of Conductive Coatings</span>
+                <span lang="zh-TW">導電塗料的未來</span>
+            </h1>
+            <p>
+                <span lang="en">Advanced Aqueous Carbon Nanotube Dispersion for permanent, transparent, and high-performance anti-static solutions.</span>
+                <span lang="zh-TW">先進水性奈米碳管分散液，為您提供永久、透明、高效能的防靜電解決方案。</span>
+            </p>
+        </div>
+    </section>
+
+    <main>
+        <div class="container" id="advantages">
+            <h2>
+                <span lang="en">Core Advantages</span>
+                <span lang="zh-TW">核心優勢</span>
+            </h2>
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="icon"> balanced </div>
+                    <h3>
+                        <span lang="en">Performance & Transparency</span>
+                        <span lang="zh-TW">性能與透明的完美平衡</span>
+                    </h3>
+                    <p>
+                        <span lang="en">Achieve outstanding anti-static properties while maintaining excellent optical clarity. A perfect synergy for high-tech applications.</span>
+                        <span lang="zh-TW">在實現卓越防靜電性能的同時，維持優異的光學透明度。為高科技應用提供完美的協同效應。</span>
+                    </p>
+                </div>
+                <div class="advantage-card">
+                    <div class="icon">eco</div>
+                    <h3>
+                        <span lang="en">Eco-Friendly & Safe</span>
+                        <span lang="zh-TW">環保與安全</span>
+                    </h3>
+                    <p>
+                        <span lang="en">Our water-based system eliminates hazardous solvents, ensuring low VOC emissions, compliance with environmental regulations, and enhanced workplace safety.</span>
+                        <span lang="zh-TW">水性系統根除了有害溶劑，確保極低的VOC排放，符合環保法規並提升工作場所的安全性。</span>
+                    </p>
+                </div>
+                <div class="advantage-card">
+                    <div class="icon">integration_instructions</div>
+                    <h3>
+                        <span lang="en">Superior Processability</span>
+                        <span lang="zh-TW">卓越的加工性能</span>
+                    </h3>
+                    <p>
+                        <span lang="en">Ultra-low viscosity at high concentration allows for seamless integration into various coating processes like spraying, dipping, and roll-to-roll coating.</span>
+                        <span lang="zh-TW">在高濃度下仍保持超低黏度，能無縫導入各種塗佈製程，如噴塗、浸塗與捲對捲塗佈。</span>
+                    </p>
+                </div>
+                <div class="advantage-card">
+                    <div class="icon">science</div>
+                    <h3>
+                        <span lang="en">Advanced Material Science</span>
+                        <span lang="zh-TW">頂尖的材料科學</span>
+                    </h3>
+                    <p>
+                        <span lang="en">With 96% carbon purity and a high aspect ratio (~1000:1), our CNTs form efficient conductive networks at minimal concentrations.</span>
+                        <span lang="zh-TW">憑藉96%的碳純度與近1000:1的高長徑比，我們的奈米碳管能以極低的濃度形成高效的導電網絡。</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container" id="performance">
+            <h2>
+                <span lang="en">Tunable Performance in Application</span>
+                <span lang="zh-TW">可調控的應用表現</span>
+            </h2>
+            <section class="performance-section">
+                <div class="performance-text">
+                    <h3>
+                        <span lang="en">From Transparent to Highly Conductive</span>
+                        <span lang="zh-TW">從高透光到高導電，精準控制</span>
+                    </h3>
+                    <p>
+                        <span lang="en">This CNT dispersion is designed to be diluted and formulated into a final coating. The examples show a coating with 0.5 wt.% CNT on an insulative PET film. By using different Wire Bar Coaters, which control the wet film thickness, the final properties can be precisely engineered.</span>
+                        <span lang="zh-TW">此分散液可被稀釋或與樹脂調配成最終塗料。圖例展示了將含有0.5wt.% CNT的塗料，應用於絕緣PET薄膜上的結果。透過使用不同的線棒塗佈器 (Wire Bar Coater) 來控制濕膜厚度，最終的性能可以被精準地設計。</span>
+                    </p>
+                     <p>
+                        <span lang="en">A lower RDS number (e.g., No. 2) deposits a thinner film, resulting in a highly transparent coating with a sheet resistance of <strong>10⁶ Ohm/sq</strong>—ideal for anti-static applications where clarity is key. A higher RDS number (e.g., No. 7) deposits a thicker film, achieving a more conductive <strong>10⁴ Ohm/sq</strong> for applications requiring superior ESD protection.</span>
+                        <span lang="zh-TW">較低的RDS號數（如 No.2）會產生較薄的塗層，得到高透明度、表面電阻為 <strong>10⁶ Ohm/sq</strong> 的成品，是透明度至關重要的防靜電應用的理想選擇。較高的RDS號數（如 No.7）則會產生較厚的塗層，達到導電性更佳的 <strong>10⁴ Ohm/sq</strong>，適用於需要更強ESD靜電防護的場景。</span>
+                    </p>
+                </div>
+                <div class="performance-images">
+                    <figure>
+                        <img src="./img/RDSno.2.jpg" alt="RDS No.2 Coater Result">
+                        <figcaption class="img-caption">
+                            <strong><span lang="en">RDS No.2</span><span lang="zh-TW">RDS No.2</span></strong><br>
+                            <span lang="en">10⁶ Ohm/sq, High Transparency</span>
+                            <span lang="zh-TW">10⁶ Ohm/sq，高透明度</span>
+                        </figcaption>
+                    </figure>
+                    <figure>
+                         <img src="./img/RDSno.7.jpg" alt="RDS No.7 Coater Result">
+                         <figcaption class="img-caption">
+                            <strong><span lang="en">RDS No.7</span><span lang="zh-TW">RDS No.7</span></strong><br>
+                            <span lang="en">10⁴ Ohm/sq, Higher Conductivity</span>
+                            <span lang="zh-TW">10⁴ Ohm/sq，高導電性</span>
+                        </figcaption>
+                    </figure>
+                </div>
+            </section>
+        </div>
+
+        <div class="container" id="data">
+            <h2>
+                <span lang="en">Technical Profile</span>
+                <span lang="zh-TW">產品技術資料</span>
+            </h2>
+            <div class="data-table-wrapper">
+                <div class="table-image">
+                    <img src="./img/ctn.jpg" alt="CNT Dispersion Liquid">
+                </div>
+                <div class="data-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><span lang="en">Property</span><span lang="zh-TW">項目</span></th>
+                                <th><span lang="en">Value</span><span lang="zh-TW">數值</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span lang="en">CNT Type</span><span lang="zh-TW">CNT 種類</span></td>
+                                <td><span lang="en">Multi-walled (MWCNT)</span><span lang="zh-TW">多層 (MWCNT)</span></td>
+                            </tr>
+                            <tr>
+                                <td><span lang="en">CNT Concentration (wt%)</span><span lang="zh-TW">CNT 濃度 (wt%)</span></td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td><span lang="en">Viscosity (mPa·s, 25°C)</span><span lang="zh-TW">黏度 (mPa·s, 25°C)</span></td>
+                                <td>&lt;50</td>
+                            </tr>
+                            <tr>
+                                <td><span lang="en">Specific Surface Area (m²/g)</span><span lang="zh-TW">比表面積 (m²/g)</span></td>
+                                <td>180-220</td>
+                            </tr>
+                            <tr>
+                                <td><span lang="en">Average Diameter (nm)</span><span lang="zh-TW">平均直徑 (nm)</span></td>
+                                <td>13</td>
+                            </tr>
+                            <tr>
+                                <td><span lang="en">Length (μm)</span><span lang="zh-TW">長度 (μm)</span></td>
+                                <td>12</td>
+                            </tr>
+                            <tr>
+                                <td><span lang="en">Carbon Purity (%)</span><span lang="zh-TW">碳素純度 (%)</span></td>
+                                <td>96</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="spec-details">
+                <h3 style="text-align: center; font-size: 1.8rem; margin-top: 60px; margin-bottom: 40px;">
+                    <span lang="en">A Deeper Look at Our Specifications</span>
+                    <span lang="zh-TW">規格深度解析</span>
+                </h3>
+                <dl>
+                    <div>
+                        <dt><span lang="en">Low Viscosity</span><span lang="zh-TW">低黏度 (<50 mPa·s)</span></dt>
+                        <dd><span lang="en">Indicates excellent flowability. This is crucial for achieving smooth, uniform coatings using various industrial methods without requiring complex equipment adjustments.</span><span lang="zh-TW">代表了優異的流動性。這對於使用各種工業方法（如噴塗、浸塗）獲得平滑、均勻的塗層至關重要，無需複雜的設備調整。</span></dd>
+                    </div>
+                    <div>
+                        <dt><span lang="en">High Aspect Ratio</span><span lang="zh-TW">高長徑比</span></dt>
+                        <dd><span lang="en">With a length of 12μm (12,000nm) and a diameter of 13nm, the aspect ratio is nearly 1000:1. This allows the CNTs to form interconnected conductive pathways efficiently, even at low concentrations.</span><span lang="zh-TW">長度為12μm（12,000nm），直徑為13nm，長徑比接近1000:1。這使得奈米碳管即使在低濃度下也能有效地形成相互連接的導電路徑。</span></dd>
+                    </div>
+                    <div>
+                        <dt><span lang="en">High Carbon Purity</span><span lang="zh-TW">高碳素純度 (96%)</span></dt>
+                        <dd><span lang="en">A high purity level means fewer impurities like amorphous carbon or metallic catalysts, which can hinder electrical performance and cause defects in the final product. 96% is a high-grade standard ensuring reliable and consistent conductivity.</span><span lang="zh-TW">高純度意味著非晶碳或金屬催化劑等雜質含量較低，這些雜質會妨礙電氣性能並在最終產品中造成缺陷。96%是一個高規格標準，確保了可靠且一致的導電性。</span></dd>
+                    </div>
+                     <div>
+                        <dt><span lang="en">High Concentration</span><span lang="zh-TW">高濃度 (5wt.%)</span></dt>
+                        <dd><span lang="en">Providing a high-concentration masterbatch gives formulators maximum flexibility. It can be easily diluted to a precise target concentration (like the 0.5 wt.% in the example) for optimal cost-performance.</span><span lang="zh-TW">提供高濃度的母液給予配方設計師最大的靈活性。它可以輕易地被稀釋到精確的目標濃度（如示例中的0.5 wt.%），以達到最佳的成本效益。</span></dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const langEnBtn = document.getElementById('lang-en');
+            const langZhBtn = document.getElementById('lang-zh');
+            const htmlEl = document.documentElement;
+
+            // Function to set language
+            function setLanguage(lang) {
+                htmlEl.setAttribute('lang', lang);
+                localStorage.setItem('language', lang);
+                
+                if (lang === 'en') {
+                    langEnBtn.classList.add('active');
+                    langZhBtn.classList.remove('active');
+                } else {
+                    langZhBtn.classList.add('active');
+                    langEnBtn.classList.remove('active');
+                }
+            }
+
+            // Event Listeners for buttons
+            langEnBtn.addEventListener('click', () => setLanguage('en'));
+            langZhBtn.addEventListener('click', () => setLanguage('zh-TW'));
+
+            // Check for saved language in localStorage or default to zh-TW
+            const savedLang = localStorage.getItem('language') || 'zh-TW';
+            setLanguage(savedLang);
+            
+            // Use Emojis as simple icons to keep the file self-contained
+            const iconMap = {
+                'balanced': '⚖️',
+                'eco': '💧',
+                'integration_instructions': '⚙️',
+                'science': '🔬'
+            };
+            document.querySelectorAll('.icon').forEach(iconEl => {
+                const iconKey = iconEl.textContent.trim();
+                if (iconMap[iconKey]) {
+                    iconEl.textContent = iconMap[iconKey];
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

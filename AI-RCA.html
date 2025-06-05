@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>製造業不良率RCA最佳化方案儀表板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Tech-Forward Neutrals -->
+    <!-- Application Structure Plan: The SPA is designed as a non-linear, thematic dashboard. It uses a sticky top navigation to allow users to jump to key sections: 1. A high-level vision with an interactive workflow diagram. 2. A risk assessment dashboard with a radar chart for intuitive risk visualization. 3. A comparative analysis section using interactive cards. 4. A visual timeline for the implementation roadmap. 5. A structured section for governance and KPIs. This structure prioritizes user exploration and understanding over the linear format of the source report, enabling users to quickly access the information most relevant to them. -->
+    <!-- Visualization & Content Choices: 1. Workflow Diagram (Goal: Organize): Using clickable HTML cards to represent the 9 steps, revealing details in a modal for clarity and engagement. This avoids a long text block. 2. Risk Radar Chart (Goal: Compare/Relationships): Using Chart.js to plot risks based on Likelihood and Impact, providing a quick visual assessment. Clicking a risk on the chart highlights its details. 3. Comparison Cards (Goal: Compare): Interactive HTML cards for comparing RCA methodologies, allowing for easy side-by-side analysis. 4. Roadmap Timeline (Goal: Change/Organize): A CSS-based visual timeline to present the phased implementation plan, making it more intuitive than a simple list. 5. Key Tables (Goal: Inform): Report tables (SQL elements, KG ontology) are converted to styled HTML tables within modals to provide detailed data without cluttering the main view. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .nav-link {
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #2563eb; /* blue-600 */
+            border-bottom-color: #2563eb; /* blue-600 */
+        }
+        .section-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out;
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2.5rem;
+        }
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 1.25rem;
+            top: 1.25rem;
+            bottom: 0;
+            width: 2px;
+            background-color: #e2e8f0; /* slate-200 */
+            transform: translateX(-50%);
+        }
+        .timeline-item:last-child:before {
+            display: none;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 1.25rem;
+            top: 0.625rem;
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: 9999px;
+            background-color: white;
+            border: 2px solid #3b82f6; /* blue-500 */
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 40vh;
+            max-height: 400px;
+            width: 100%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/80 backdrop-blur-sm sticky top-0 z-40 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-slate-800">AI-RCA 解決方案儀表板</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#vision" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">總覽與願景</a>
+                        <a href="#workflow" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">互動流程</a>
+                        <a href="#risks" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">風險儀表板</a>
+                        <a href="#comparison" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">方案比較</a>
+                        <a href="#roadmap" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">實施路徑</a>
+                        <a href="#governance" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600">治理框架</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="md:hidden hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#vision" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600">總覽與願景</a>
+                <a href="#workflow" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600">互動流程</a>
+                <a href="#risks" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600">風險儀表板</a>
+                <a href="#comparison" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600">方案比較</a>
+                <a href="#roadmap" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600">實施路徑</a>
+                <a href="#governance" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600">治理框架</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        
+        <section id="vision" class="mb-16 scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900">智慧化根本原因分析 (RCA) 願景</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">整合本地知識與雲端 AI，打造高效、安全且具深度洞察力的製造業不良率分析系統，克服傳統 RCA 方法的侷限性。</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="section-card p-6">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-3">挑戰：傳統 RCA 的瓶頸</h3>
+                    <p class="text-slate-600 mb-4">現代製造業數據量龐大且複雜，傳統 RCA 方法面臨以下挑戰，導致分析效率低落且難以觸及問題核心。</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start"><span class="flex-shrink-0 h-6 w-6 text-red-500 mr-3">●</span><span><strong class="font-semibold">耗時且依賴人工：</strong>分析過程冗長，易受個人經驗與主觀偏見影響。</span></li>
+                        <li class="flex items-start"><span class="flex-shrink-0 h-6 w-6 text-red-500 mr-3">●</span><span><strong class="font-semibold">數據孤島：</strong>品質、生產數據分散，難以進行全面性整合分析。</span></li>
+                        <li class="flex items-start"><span class="flex-shrink-0 h-6 w-6 text-red-500 mr-3">●</span><span><strong class="font-semibold">表面化分析：</strong>常流於解決表面症狀，未能找出真正根本原因，導致問題重複發生。</span></li>
+                    </ul>
+                </div>
+                <div class="section-card p-6">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-3">方案：混合式 AI 的潛力</h3>
+                    <p class="text-slate-600 mb-4">我們提出的混合式 AI 流程，旨在結合不同技術的優勢，實現革命性的 RCA 能力。</p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start"><span class="flex-shrink-0 h-6 w-6 text-green-500 mr-3">●</span><span><strong class="font-semibold">SQL 數據：</strong>提供精確的結構化數據基礎，回答「何事、何時、何地」。</span></li>
+                        <li class="flex items-start"><span class="flex-shrink-0 h-6 w-6 text-green-500 mr-3">●</span><span><strong class="font-semibold">本地知識圖譜 (KG-RAG)：</strong>整合內部文件 (SOP、郵件)，提供豐富的上下文，回答「為何」。</span></li>
+                        <li class="flex items-start"><span class="flex-shrink-0 h-6 w-6 text-green-500 mr-3">●</span><span><strong class="font-semibold">雲端大型語言模型 (LLM)：</strong>利用強大的分析與推理能力，生成根本原因假設與改善對策。</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="workflow" class="mb-16 scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900">互動式 AI-RCA 工作流程</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">點擊下方流程中的任一步驟，即可深入了解其詳細說明、核心觀點與潛在挑戰。</p>
+            </div>
+            <div class="relative">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="workflow-step-card" data-step="1">
+                        <span class="step-number">1</span>
+                        <h4 class="step-title">使用者查詢</h4>
+                        <p class="step-desc">輸入真實產品、產線、時間範圍</p>
+                    </div>
+                    <div class="workflow-step-card" data-step="2">
+                        <span class="step-number">2</span>
+                        <h4 class="step-title">SQL 數據查詢</h4>
+                        <p class="step-desc">查詢品質與產量紀錄 (真名)</p>
+                    </div>
+                    <div class="workflow-step-card" data-step="3">
+                        <span class="step-number">3</span>
+                        <h4 class="step-title">本地知識庫查詢</h4>
+                        <p class="step-desc">KG-RAG 查詢內部文件 (模糊查詢)</p>
+                    </div>
+                    <div class="workflow-step-card col-span-1 md:col-span-3" data-step="4">
+                        <span class="step-number">4</span>
+                        <h4 class="step-title">統一假名化</h4>
+                        <p class="step-desc">對產品與產線編號進行假名化處理，保護敏感資訊</p>
+                    </div>
+                    <div class="workflow-step-card" data-step="5">
+                        <span class="step-number">5</span>
+                        <h4 class="step-title">數據送交 Gemini</h4>
+                        <p class="step-desc">將假名化後的 SQL 與 RAG 數據送出</p>
+                    </div>
+                     <div class="workflow-step-card" data-step="6">
+                        <span class="step-number">6</span>
+                        <h4 class="step-title">雙階段 AI 分析</h4>
+                        <p class="step-desc">Gemini 整合內外部知識生成建議</p>
+                    </div>
+                     <div class="workflow-step-card" data-step="7">
+                        <span class="step-number">7</span>
+                        <h4 class="step-title">結果回傳與處理</h4>
+                        <p class="step-desc">假名還原並掃描敏感資訊</p>
+                    </div>
+                     <div class="workflow-step-card" data-step="8">
+                        <span class="step-number">8</span>
+                        <h4 class="step-title">結果呈現</h4>
+                        <p class="step-desc">顯示 RCA 結果，提供真/假名切換</p>
+                    </div>
+                     <div class="workflow-step-card" data-step="9">
+                        <span class="step-number">9</span>
+                        <h4 class="step-title">匿名稽核日誌</h4>
+                        <p class="step-desc">記錄全流程，確保合規與可追溯性</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="risks" class="mb-16 scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900">數據安全風險儀表板</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">本儀表板視覺化呈現了混合雲架構下的主要安全與隱私風險。點擊圖表中的風險點或下方的卡片以了解更多詳情。</p>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-8 items-center">
+                <div class="section-card p-6">
+                    <div class="chart-container">
+                        <canvas id="riskRadarChart"></canvas>
+                    </div>
+                </div>
+                <div id="risk-details-container" class="space-y-4">
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="mb-16 scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900">進階 RCA 方法論比較</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">了解我們提出的客製化方案與其他主流 RCA 方法的優劣勢，以做出最符合需求的策略選擇。</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="section-card p-6 flex flex-col">
+                    <h3 class="font-bold text-lg text-blue-600 mb-2">本提案 (LLM-RAG)</h3>
+                    <p class="text-slate-600 text-sm mb-4 flex-grow">結合 SQL、本地 KG 與雲端 LLM，平衡本地控制與 AI 能力。</p>
+                    <div class="mt-auto">
+                        <p class="font-semibold text-green-600 text-sm">優勢：</p>
+                        <p class="text-slate-600 text-xs mb-2">高度客製化，能利用內部隱性知識。</p>
+                        <p class="font-semibold text-red-600 text-sm">劣勢：</p>
+                        <p class="text-slate-600 text-xs">整合複雜，假名化可能影響分析深度。</p>
+                    </div>
+                </div>
+                <div class="section-card p-6 flex flex-col">
+                    <h3 class="font-bold text-lg text-slate-700 mb-2">商用 AI 平台</h3>
+                    <p class="text-slate-600 text-sm mb-4 flex-grow">如 Siemens MindSphere, Bosch Nexeed 等整合式解決方案。</p>
+                     <div class="mt-auto">
+                        <p class="font-semibold text-green-600 text-sm">優勢：</p>
+                        <p class="text-slate-600 text-xs mb-2">快速部署，功能完善，有專業支援。</p>
+                        <p class="font-semibold text-red-600 text-sm">劣勢：</p>
+                        <p class="text-slate-600 text-xs">成本高，客製化彈性低，供應商鎖定。</p>
+                    </div>
+                </div>
+                <div class="section-card p-6 flex flex-col">
+                    <h3 class="font-bold text-lg text-slate-700 mb-2">因果 AI (Causal AI)</h3>
+                    <p class="text-slate-600 text-sm mb-4 flex-grow">透過統計方法識別真實因果關係，而非僅是相關性。</p>
+                     <div class="mt-auto">
+                        <p class="font-semibold text-green-600 text-sm">優勢：</p>
+                        <p class="text-slate-600 text-xs mb-2">能找出真正根本原因，避免錯誤歸因。</p>
+                        <p class="font-semibold text-red-600 text-sm">劣勢：</p>
+                        <p class="text-slate-600 text-xs">需清晰的因果假設，對數據品質要求高。</p>
+                    </div>
+                </div>
+                <div class="section-card p-6 flex flex-col">
+                    <h3 class="font-bold text-lg text-slate-700 mb-2">KG 增強貝氏網路</h3>
+                    <p class="text-slate-600 text-sm mb-4 flex-grow">結合 KG 的結構化知識與貝氏網路的機率推理。</p>
+                     <div class="mt-auto">
+                        <p class="font-semibold text-green-600 text-sm">優勢：</p>
+                        <p class="text-slate-600 text-xs mb-2">可解釋性強，能處理不確定性。</p>
+                        <p class="font-semibold text-red-600 text-sm">劣勢：</p>
+                        <p class="text-slate-600 text-xs">模型建構複雜，需要高度專業知識。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="roadmap" class="mb-16 scroll-mt-24">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900">分階段實施路徑圖</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">我們建議採用分階段的方式來建構此系統，以管理複雜性、降低風險並及早展現價值。</p>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="ml-10 pl-4">
+                        <h3 class="text-lg font-bold text-blue-600">第一階段：基礎建設與試點 (3-6 個月)</h3>
+                        <p class="text-slate-600 mt-1">選擇 1-2 個關鍵產品線進行試點，建立初始的 KG 本體與數據提取流程，開發基本的假名化機制與 Gemini 提示，並專注於驗證端到端的流程可行性。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="ml-10 pl-4">
+                        <h3 class="text-lg font-bold text-blue-600">第二階段：擴展與精煉 (6-12 個月)</h3>
+                        <p class="text-slate-600 mt-1">根據試點經驗擴展 KG 數據源並優化本體，提高 NLP 提取準確率，增強安全功能，並逐步將系統推廣至更多產品線。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                     <div class="timeline-dot"></div>
+                    <div class="ml-10 pl-4">
+                        <h3 class="text-lg font-bold text-blue-600">第三階段：全面推廣與持續優化 (持續進行)</h3>
+                        <p class="text-slate-600 mt-1">在相關製造領域全面部署，實施穩健的監控與治理流程，建立持續改進循環，並探索整合因果 AI 等更先進的技術。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="governance" class="scroll-mt-24">
+             <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900">治理框架與成功指標</h2>
+                <p class="mt-4 max-w-3xl mx-auto text-lg text-slate-600">建立強健的治理框架並定義清晰的成功指標 (KPI)，是確保系統安全、合規、有效並持續創造價值的基石。</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="section-card p-6">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4">核心治理原則 (參考 NIST AI RMF)</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-semibold text-slate-700">治理 (Govern)</h4>
+                            <p class="text-sm text-slate-600">建立 AI 風險治理結構，定義角色與職責，確保符合公司政策與 AI 倫理規範。</p>
+                        </div>
+                         <div>
+                            <h4 class="font-semibold text-slate-700">盤點 (Map)</h4>
+                            <p class="text-sm text-slate-600">識別並記錄系統中各環節的潛在風險，如數據洩漏、LLM 偏見、錯誤 RCA 結果等。</p>
+                        </div>
+                         <div>
+                            <h4 class="font-semibold text-slate-700">衡量 (Measure)</h4>
+                            <p class="text-sm text-slate-600">開發並追蹤 RCA 準確性、建議實用性、系統效能等 KPI。</p>
+                        </div>
+                         <div>
+                            <h4 class="font-semibold text-slate-700">管理 (Manage)</h4>
+                            <p class="text-sm text-slate-600">根據風險評估，實施並維護緩解措施，如優化提示、加強數據品質控制。</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="section-card p-6">
+                    <h3 class="text-xl font-semibold text-slate-800 mb-4">關鍵績效指標 (KPI)</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 mr-3 text-blue-500 font-bold">●</span>
+                            <div>
+                                <h4 class="font-semibold">RCA 有效性</h4>
+                                <p class="text-sm text-slate-600">重複性缺陷減少率、根本原因識別準確率、分析時間縮短率。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 mr-3 text-blue-500 font-bold">●</span>
+                             <div>
+                                <h4 class="font-semibold">系統性能</h4>
+                                <p class="text-sm text-slate-600">查詢/回應延遲時間、端到端流程處理時間。</p>
+                            </div>
+                        </li>
+                         <li class="flex items-start">
+                            <span class="flex-shrink-0 mr-3 text-blue-500 font-bold">●</span>
+                             <div>
+                                <h4 class="font-semibold">數據安全與隱私</h4>
+                                <p class="text-sm text-slate-600">敏感資訊掃描準確率、隱私事件數量 (目標為零)。</p>
+                            </div>
+                        </li>
+                         <li class="flex items-start">
+                             <span class="flex-shrink-0 mr-3 text-blue-500 font-bold">●</span>
+                             <div>
+                                <h4 class="font-semibold">使用者採用與滿意度</h4>
+                                <p class="text-sm text-slate-600">活躍使用者數量、使用者對系統的回饋評分。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <footer class="bg-slate-800 text-white mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm text-slate-400">
+            <p>&copy; 2025 AI-Powered RCA Solution. All Rights Reserved.</p>
+            <p class="mt-1">此互動式報告旨在視覺化呈現「製造業不良率RCA最佳化方案報告」之核心內容。</p>
+        </div>
+    </footer>
+
+    <div id="modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden opacity-0">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-95">
+            <div class="p-6">
+                <div class="flex justify-between items-start">
+                    <h3 id="modal-title" class="text-2xl font-bold text-slate-900"></h3>
+                    <button id="modal-close" class="text-slate-400 hover:text-slate-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div id="modal-body" class="mt-4 text-slate-600"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+            const header = document.getElementById('header');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - header.offsetHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                     if(mobileMenu.classList.contains('hidden') === false) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+            
+            function updateActiveLink() {
+                let index = sections.length;
+                while(--index && window.scrollY + header.offsetHeight < sections[index].offsetTop) {}
+                
+                navLinks.forEach((link) => link.classList.remove('active'));
+                const activeLink = document.querySelector(`.nav-link[href="#${sections[index].id}"]`);
+                if(activeLink) {
+                   activeLink.classList.add('active');
+                }
+            }
+            window.addEventListener('scroll', updateActiveLink);
+            updateActiveLink();
+
+            const modal = document.getElementById('modal');
+            const modalClose = document.getElementById('modal-close');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            const workflowStepCards = document.querySelectorAll('.workflow-step-card');
+            
+            const modalData = {
+                '1': {
+                    title: '步驟 1: 使用者查詢',
+                    content: `
+                        <p class="mb-4">工作流程始於使用者根據具體需求，定義查詢條件。這一步驟是整個分析的起點，其精確性直接影響後續數據提取的相關性。</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>輸入內容：</strong>真實的產品型號、生產線編號、以及欲分析的時間範圍。</li>
+                            <li><strong>核心目的：</strong>精確地界定問題範圍，聚焦於特定的生產批次或時間段。</li>
+                            <li><strong>潛在挑戰：</strong>使用者可能輸入不完整或不一致的查詢條件，需要系統具備一定的容錯或提示能力。</li>
+                        </ul>
+                    `
+                },
+                '2': {
+                    title: '步驟 2: SQL 數據查詢',
+                    content: `
+                        <p class="mb-4">系統根據使用者提供的條件，從製造執行系統 (MES) 或品質管理系統 (QMS) 的 SQL 資料庫中，提取結構化的品質與生產數據。此數據構成了量化分析的基礎。</p>
+                        <p class="mb-2 font-semibold">核心觀點：</p>
+                        <p class="mb-4">SQL 數據提供了缺陷發生的「何事、何時、何地」等基本事實，但往往缺乏深層次的「為何」的上下文脈絡。數據的品質、完整性和一致性將直接影響後續所有分析的準確性。</p>
+                        <p class="mb-2 font-semibold">關鍵數據元素範例 (點擊查看詳情)：</p>
+                        <button id="show-sql-table" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">顯示 SQL 關鍵數據元素表</button>
+                        <div id="sql-table-container" class="hidden mt-4"></div>
+                    `
+                },
+                '3': {
+                    title: '步驟 3: 本地知識庫查詢 (KG-RAG)',
+                    content: `
+                        <p class="mb-4">此步驟利用檢索增強生成 (RAG) 技術，查詢一個本地建構的知識圖譜 (KG)。這個知識圖譜是從公司內部的非結構化文件中提取知識而來，如技術郵件、標準作業流程 (SOP)、歷史 RCA 報告等。</p>
+                        <p class="mb-2 font-semibold">核心觀點：</p>
+                        <p class="mb-4">這是整個流程的潛力基石。它將那些寶貴但分散的內部隱性知識結構化，為後續的 AI 分析提供豐富、具體的上下文。KG 的品質（本體設計、數據提取準確率）直接決定了 RAG 檢索的品質。</p>
+                        <p class="mb-2 font-semibold">關鍵技術：</p>
+                         <ul class="list-disc list-inside space-y-2">
+                            <li><strong>知識圖譜 (KG)：</strong>將「缺陷」、「原因」、「解決方案」等實體及其關係進行結構化表示。</li>
+                            <li><strong>模糊查詢：</strong>即使查詢術語與知識庫中的不完全匹配（如錯字、簡稱），也能找到相關資訊。</li>
+                        </ul>
+                        <button id="show-kg-table" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">顯示 KG 本體結構範例</button>
+                        <div id="kg-table-container" class="hidden mt-4"></div>
+                    `
+                },
+                '4': {
+                    title: '步驟 4: 統一假名化',
+                    content: `
+                        <p class="mb-4">在將任何數據發送至雲端 LLM 之前，系統會對所有具識別性的敏感資訊（主要是產品型號和產線編號）進行假名化處理。這意味著用一個隨機、無意義的代碼（如 "產品_A"）替換真實名稱（如 "Model-X123"），並在本地安全地保存一個映射表。</p>
+                        <p class="mb-2 font-semibold">核心觀點：</p>
+                        <p class="mb-4">這是一個關鍵的數據安全與隱私保護措施，旨在確保敏感的商業資訊不會離開本地環境。然而，這也帶來了本方案最大的挑戰與權衡：</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>優點：</strong>顯著降低數據外洩的風險，符合數據保護法規。</li>
+                            <li><strong>挑戰：</strong>LLM 將失去與真實產品型號相關的任何背景知識，使其無法利用外部網路資訊進行針對性搜尋，也可能影響其對問題細微差別的理解。AI 分析的成敗將高度依賴於前一步驟 RAG 所提供上下文的豐富程度。</li>
+                        </ul>
+                    `
+                },
+                '5': {
+                    title: '步驟 5: 數據送交 Gemini',
+                    content: `
+                        <p class="mb-4">經過假名化處理後的結構化數據（來自 SQL）和非結構化上下文（來自 KG-RAG）被打包，並透過安全的 API 呼叫，發送給雲端的 Google Gemini 模型進行分析。</p>
+                        <p class="mb-2 font-semibold">關鍵考量：</p>
+                         <ul class="list-disc list-inside space-y-2">
+                            <li><strong>數據格式化：</strong>需要將數據組織成 LLM 易於理解的格式，通常是結構化的 JSON 或清晰的文本格式，並附上明確的指示（Prompt）。</li>
+                            <li><strong>API 安全：</strong>所有通訊都必須使用最新的加密標準（如 TLS 1.3）來保護傳輸中的數據。</li>
+                            <li><strong>合約協議：</strong>必須與雲端供應商（Google）有明確的數據處理協議，確保提交的數據不會被用於模型再訓練或任何其他未經授權的用途。</li>
+                        </ul>
+                    `
+                },
+                '6': {
+                    title: '步驟 6: 雙階段 AI 分析',
+                    content: `
+                        <p class="mb-4">這是一個精密的兩階段分析設計，旨在最大化分析的廣度與深度。</p>
+                        <p class="mb-2 font-semibold">第一階段分析：</p>
+                        <p class="mb-4">提示 Gemini 基於假名化後的 SQL 數據，並結合其通用的外部網路知識，給出初步的 RCA 假設。例如，基於缺陷描述「軸承過熱」，Gemini 可能會搜尋「工業泵軸承過熱的常見原因」。</p>
+                        <p class="mb-2 font-semibold">第二階段分析：</p>
+                        <p class="mb-4">將第一階段的輸出，與假名化後的本地 KG-RAG 數據（如相關 SOP、歷史維修記錄）結合，再次提示 Gemini。這一步讓 AI 能夠用具體的內部知識來驗證、精煉或否定初步的假設，從而生成更具針對性和可行性的最終建議。</p>
+                        <p class="mb-2 font-semibold">核心觀點：</p>
+                         <p>此設計結合了通用知識的廣度與內部知識的深度。然而，其成功高度依賴於精巧的提示工程 (Prompt Engineering) 來引導 AI 的思考過程。</p>
+                    `
+                },
+                '7': {
+                    title: '步驟 7: 結果回傳與處理',
+                    content: `
+                       <p class="mb-4">Gemini 生成的最終建議（仍基於假名化數據）被回傳到本地系統。在呈現給使用者之前，系統會執行兩個關鍵的後處理步驟。</p>
+                       <ul class="list-disc list-inside space-y-2">
+                            <li><strong>假名還原 (反匿名化)：</strong>系統使用本地安全儲存的映射表，將 "產品_A" 還原為 "Model-X123"，使結果對使用者具有實際意義。此過程必須在安全的本地環境中執行。</li>
+                            <li><strong>敏感資訊掃描：</strong>對 AI 的輸出進行最後一次掃描，以確保它沒有意外地生成或幻覺出任何新的敏感資訊（例如，推測出客戶名稱或專有技術術語）。這是一個重要的安全防護網。</li>
+                        </ul>
+                    `
+                },
+                '8': {
+                    title: '步驟 8: 結果呈現',
+                    content: `
+                       <p class="mb-4">經過處理和驗證的最終 RCA 結果和改善建議，將透過一個清晰、直觀的使用者介面 (UI) 呈現給使用者。</p>
+                       <p class="mb-2 font-semibold">關鍵 UI/UX 功能：</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>清晰的視覺層次：</strong>突出顯示最可能的根本原因和建議的最高優先級行動。</li>
+                            <li><strong>可追溯性：</strong>提供證據連結，讓使用者可以追溯到是哪些 SQL 數據或 RAG 文檔支持了某個結論，以建立信任。</li>
+                            <li><strong>真/假名視圖切換：</strong>這是一個強大的功能。允許普通使用者查看易於理解的真實名稱視圖，同時也允許數據管理員或稽核人員切換到假名化視圖，以檢查發送到雲端的確切數據內容，這對於安全審查非常有用。</li>
+                        </ul>
+                    `
+                },
+                '9': {
+                    title: '步驟 9: 匿名稽核日誌',
+                    content: `
+                       <p class="mb-4">系統會自動記錄整個工作流程的每一個關鍵操作，但這些日誌是匿名的，以確保安全與合規。</p>
+                       <p class="mb-2 font-semibold">日誌記錄內容：</p>
+                       <p>日誌記錄的是「過程」而非「敏感內容」。例如，它會記錄：</p>
+                       <ul class="list-disc list-inside space-y-2">
+                            <li>"使用者A 在時間T 查詢了 偽產線_X 的 缺陷_Y。"</li>
+                            <li>"從 SQL 檢索了 N 條記錄。"</li>
+                            <li>"執行了 KG-RAG 查詢。"</li>
+                            <li>"向 Gemini 發送了請求 (請求ID: 12345)。"</li>
+                            <li>"接收到 Gemini 回應 (回應ID: 67890)。"</li>
+                            <li>"為 使用者A 執行了反匿名化並顯示結果。"</li>
+                        </ul>
+                        <p class="mt-4">這種方式提供了完整的操作可追溯性，用於安全調查和合規性稽核，同時避免了在日誌中儲存任何機密數據，從而產生新的風險。</p>
+                    `
+                },
+            };
+            
+            function openModal(step) {
+                const data = modalData[step];
+                if (data) {
+                    modalTitle.textContent = data.title;
+                    modalBody.innerHTML = data.content;
+                    modal.classList.remove('hidden');
+                    setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                    setTimeout(() => modal.querySelector('.modal-content').classList.remove('scale-95'), 10);
+                    
+                    if (step === '2') {
+                        const btn = document.getElementById('show-sql-table');
+                        btn.addEventListener('click', showSqlTable, { once: true });
+                    }
+                    if (step === '3') {
+                        const btn = document.getElementById('show-kg-table');
+                        btn.addEventListener('click', showKgTable, { once: true });
+                    }
+                }
+            }
+
+            function closeModal() {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+
+            workflowStepCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    openModal(card.dataset.step);
+                });
+                card.classList.add('section-card', 'p-4', 'cursor-pointer', 'text-center', 'relative');
+                card.querySelector('.step-number').classList.add('absolute', 'top-2', 'left-3', 'text-sm', 'font-bold', 'text-blue-500');
+                card.querySelector('.step-title').classList.add('font-bold', 'text-lg', 'text-slate-800', 'mt-4');
+                card.querySelector('.step-desc').classList.add('text-sm', 'text-slate-500', 'mt-1');
+            });
+
+            modalClose.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            function showSqlTable() {
+                const container = document.getElementById('sql-table-container');
+                container.innerHTML = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-500">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">數據元素</th>
+                                    <th scope="col" class="px-6 py-3">與RCA的相關性</th>
+                                    <th scope="col" class="px-6 py-3">潛在挑戰</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b"><td class="px-6 py-4 font-medium text-slate-900">缺陷代碼 (Defect_Code)</td><td class="px-6 py-4">標準化缺陷分類，便於統計</td><td class="px-6 py-4">代碼定義不清、使用不一致</td></tr>
+                                <tr class="bg-slate-50 border-b"><td class="px-6 py-4 font-medium text-slate-900">發生時間戳</td><td class="px-6 py-4">確定問題發生的時間點與頻率</td><td class="px-6 py-4">時區問題、記錄延遲</td></tr>
+                                <tr class="bg-white border-b"><td class="px-6 py-4 font-medium text-slate-900">機台 ID (Machine_ID)</td><td class="px-6 py-4">關聯特定機台的故障或參數異常</td><td class="px-6 py-4">機台 ID 變更、數據缺失</td></tr>
+                                <tr class="bg-slate-50 border-b"><td class="px-6 py-4 font-medium text-slate-900">製程參數</td><td class="px-6 py-4">識別製程參數偏移與缺陷的關聯</td><td class="px-6 py-4">參數單位不一致、數據漂移</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                container.classList.remove('hidden');
+                document.getElementById('show-sql-table').style.display = 'none';
+            }
+
+            function showKgTable() {
+                const container = document.getElementById('kg-table-container');
+                container.innerHTML = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-500">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">實體類型</th>
+                                    <th scope="col" class="px-6 py-3">關係類型 (範例)</th>
+                                    <th scope="col" class="px-6 py-3">數據來源</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b"><td class="px-6 py-4 font-medium text-slate-900">缺陷 (Defect)</td><td class="px-6 py-4"><code>caused_by</code> (與原因關聯)</td><td class="px-6 py-4">QMS, 維護日誌</td></tr>
+                                <tr class="bg-slate-50 border-b"><td class="px-6 py-4 font-medium text-slate-900">SOP</td><td class="px-6 py-4"><code>applies_to_machine</code> (與機台關聯)</td><td class="px-6 py-4">文件管理系統</td></tr>
+                                <tr class="bg-white border-b"><td class="px-6 py-4 font-medium text-slate-900">郵件 (Email)</td><td class="px-6 py-4"><code>mentions_defect</code> (與缺陷關聯)</td><td class="px-6 py-4">郵件歸檔系統</td></tr>
+                                <tr class="bg-slate-50 border-b"><td class="px-6 py-4 font-medium text-slate-900">原因 (Cause)</td><td class="px-6 py-4"><code>addressed_by_action</code> (與改善對策關聯)</td><td class="px-6 py-4">歷史 RCA 報告</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                container.classList.remove('hidden');
+                document.getElementById('show-kg-table').style.display = 'none';
+            }
+            
+            const riskData = [
+                { risk: "本地數據未經授權存取", likelihood: 3, impact: 4, mitigation: "強健的 IAM 政策、數據庫加密、定期稽核。" },
+                { risk: "假名化映射表洩漏", likelihood: 2, impact: 5, mitigation: "使用強健的假名化演算法、安全儲存映射表、嚴格限制存取。" },
+                { risk: "雲端供應商數據處理不當", likelihood: 3, impact: 4, mitigation: "審查 Gemini 數據處理附錄 (DPA)、確保符合 GDPR/相關法規、數據傳輸加密。" },
+                { risk: "LLM 推斷出原始資訊", likelihood: 3, impact: 4, mitigation: "與 Google 確認數據不被用於模型再訓練、採用企業版隱私功能、定期檢視安全公告。" },
+                { risk: "LLM 輸出包含未預期敏感資訊", likelihood: 2, impact: 3, mitigation: "使用專業工具或自訂規則對 LLM 輸出進行敏感資訊掃描。" },
+                { risk: "匿名化影響 RCA 品質", likelihood: 4, impact: 4, mitigation: "強化 KG 與 RAG 品質，優化提示工程，引導 LLM 專注於模式而非特定 ID。" },
+            ];
+            
+            const riskDetailsContainer = document.getElementById('risk-details-container');
+            riskData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = `risk-card section-card p-4 cursor-pointer border-l-4 border-transparent`;
+                card.dataset.index = index;
+                card.innerHTML = `
+                    <h4 class="font-semibold text-slate-800">${item.risk}</h4>
+                    <p class="text-sm text-slate-500 mt-1">${item.mitigation}</p>
+                `;
+                riskDetailsContainer.appendChild(card);
+            });
+
+            const ctx = document.getElementById('riskRadarChart').getContext('2d');
+            const riskRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: riskData.map(d => d.risk.length > 20 ? d.risk.substring(0, 18) + '...' : d.risk),
+                    datasets: [{
+                        label: '風險評估 (可能性 x 影響)',
+                        data: riskData.map(d => ({ r: Math.sqrt(d.likelihood * d.impact), likelihood: d.likelihood, impact: d.impact })),
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(37, 99, 235, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: {
+                        line: {
+                            borderWidth: 2
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: false
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 5,
+                            pointLabels: {
+                                font: {
+                                    size: 10,
+                                    family: "'Inter', 'Noto Sans TC', sans-serif"
+                                },
+                                color: '#475569',
+                                callback: function(label, index) {
+                                    return riskData[index].risk.length > 15 ? riskData[index].risk.substring(0, 13) + '...' : riskData[index].risk;
+                                }
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                backdropColor: 'transparent'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const item = riskData[context.dataIndex];
+                                    return `${item.risk}: 可能性=${item.likelihood}, 影響=${item.impact}`;
+                                }
+                            }
+                        }
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const firstElement = elements[0];
+                            const index = firstElement.index;
+                            highlightRiskCard(index);
+                        }
+                    }
+                }
+            });
+
+            const riskCards = document.querySelectorAll('.risk-card');
+            function highlightRiskCard(index) {
+                riskCards.forEach(c => {
+                    c.style.borderColor = 'transparent';
+                    c.style.backgroundColor = 'white';
+                });
+                const selectedCard = document.querySelector(`.risk-card[data-index='${index}']`);
+                if (selectedCard) {
+                    selectedCard.style.borderColor = '#2563eb';
+                    selectedCard.style.backgroundColor = '#eff6ff';
+                    selectedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
+            riskCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    highlightRiskCard(card.dataset.index);
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
