@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM 於製造業品質根本原因分析之互動式報告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Slate & Cyan -->
+    <!-- Application Structure Plan: The SPA is designed as a top-down narrative dashboard. It starts with a high-level introduction (Hero), explains the 'why' (Paradigm Shift), delves into the 'how' with two main interactive sections (Methodologies & Framework Comparison), shows the broader context (Ecosystem Integration), and concludes with challenges and future outlook. This thematic flow, rather than a linear report structure, is chosen to guide the user from general concepts to specific, interactive details, enhancing comprehension and engagement. Key interactions include tabbed content for methodologies and a dynamic radar chart for direct framework comparison, allowing users to actively explore the data. -->
+    <!-- Visualization & Content Choices: 1. Framework Comparison: Report's static table -> Goal: Compare -> Viz: Interactive Radar Chart -> Interaction: User clicks buttons to select/deselect frameworks, chart updates dynamically -> Justification: Radar chart is excellent for comparing multiple entities across various quantitative and qualitative metrics simultaneously, making complex comparisons intuitive. -> Library: Chart.js/Canvas. 2. Ecosystem Integration: Report's textual description -> Goal: Organize/Show Relationships -> Viz: Diagram from structured HTML/CSS -> Interaction: Hovering over components reveals explanatory tooltips -> Justification: A visual diagram clarifies complex system interconnections far better than text alone. -> Library: HTML/Tailwind CSS/JS. 3. Methodology Cards: Report's detailed descriptions -> Goal: Inform/Organize -> Viz: Tabbed layout with clickable cards -> Interaction: Users select a category (Tool-based/Knowledge-based) and click cards for details -> Justification: Breaks down dense information into manageable, user-selectable chunks, preventing overwhelm. -> Library: HTML/Tailwind CSS/JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #1e293b; /* slate-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+                max-height: 600px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover {
+            color: #0891b2; /* cyan-600 */
+        }
+        .active-tab {
+            background-color: #06b6d4; /* cyan-500 */
+            color: white;
+        }
+        .inactive-tab {
+            background-color: #f1f5f9; /* slate-100 */
+            color: #475569; /* slate-600 */
+        }
+        .framework-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .framework-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .has-tooltip:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-cyan-600">LLM for RCA</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700">總覽</a>
+                        <a href="#methodologies" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700">核心方法論</a>
+                        <a href="#comparison" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700">框架比較</a>
+                        <a href="#ecosystem" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700">生態整合</a>
+                        <a href="#challenges" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-700">挑戰與展望</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="overview" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-slate-900">大型語言模型 (LLM)：驅動製造業品質分析的革命</h2>
+                <p class="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-slate-600">
+                    本報告深入探討 2023-2025 年間，大型語言模型 (LLM) 如何從實驗性工具演變為製造業品質異常根本原因分析 (RCA) 的核心引擎。LLM 不再是單一的解決方案，而是作為一個智能「大腦」，協調專用工具、代理與知識庫，以應對複雜的製造挑戰，最終實現更高效、更準確的品質管理。
+                </p>
+            </div>
+        </section>
+
+        <section class="py-16 md:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-slate-900">RCA 的典範轉移</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">LLM 通過整合多源數據與先進的推理能力，從根本上改變了傳統 RCA 的面貌。</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-slate-200">
+                        <h4 class="text-xl font-bold mb-4 text-rose-600">傳統 RCA 方法</h4>
+                        <ul class="space-y-3 text-slate-700">
+                            <li class="flex items-start"><span class="mr-3 text-rose-500">耗時費力：</span>高度依賴手動調查與專家經驗。</li>
+                            <li class="flex items-start"><span class="mr-3 text-rose-500">數據孤島：</span>難以綜合分析多樣化數據源 (日誌、傳感器、筆記)。</li>
+                            <li class="flex items-start"><span class="mr-3 text-rose-500">容易出錯：</span>在壓力下易導致草率結論與膚淺調查。</li>
+                            <li class="flex items-start"><span class="mr-3 text-rose-500">模式隱晦：</span>人類分析師可能忽略數據中細微的模式與關聯。</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-lg border border-cyan-300 transform scale-105">
+                        <h4 class="text-xl font-bold mb-4 text-cyan-600">LLM 驅動的 RCA</h4>
+                        <ul class="space-y-3 text-slate-700">
+                            <li class="flex items-start"><span class="mr-3 text-cyan-500">自動高效：</span>自動分析海量、多模態數據，加速調查過程。</li>
+                            <li class="flex items-start"><span class="mr-3 text-cyan-500">數據融合：</span>無縫整合定量 (傳感器) 與定性 (文本) 資訊。</li>
+                            <li class="flex items-start"><span class="mr-3 text-cyan-500">深度洞察：</span>識別隱藏的模式與因果關係，提供更深入的分析。</li>
+                            <li class="flex items-start"><span class="mr-3 text-cyan-500">人機協作：</span>作為「副駕駛」，增強專家能力，而非完全取代。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="methodologies" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-slate-900">LLM 驅動 RCA 的核心方法論</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">近期的研究聚焦於兩大主流方向：利用外部工具與代理增強 LLM 的執行能力，以及透過知識庫為 LLM 提供深厚的領域知識。請點擊下方的標籤頁與卡片來探索這些先進的框架。</p>
+                </div>
+
+                <div class="w-full max-w-4xl mx-auto">
+                    <div class="mb-6 flex justify-center p-1 rounded-lg bg-slate-100">
+                        <button id="tab-agent" class="tab-btn active-tab w-1/2 py-2.5 text-sm font-medium leading-5 rounded-lg">
+                            工具與代理增強系統
+                        </button>
+                        <button id="tab-knowledge" class="tab-btn inactive-tab w-1/2 py-2.5 text-sm font-medium leading-5 rounded-lg">
+                            知識增強系統
+                        </button>
+                    </div>
+
+                    <div id="content-agent" class="tab-content">
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                    </div>
+                    <div id="content-knowledge" class="tab-content hidden">
+                        <div class="grid md:grid-cols-2 gap-6">
+                        </div>
+                    </div>
+                </div>
+                 <div id="framework-details" class="mt-8 p-6 bg-slate-100 rounded-lg min-h-[150px] max-w-4xl mx-auto text-slate-700 leading-relaxed">
+                    <p class="text-center text-slate-500">點擊上方的卡片以查看詳細資訊。</p>
+                 </div>
+            </div>
+        </section>
+
+        <section id="comparison" class="py-16 md:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-slate-900">互動式框架比較</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">不同的 RCA 框架各有側重。使用下方的按鈕選擇您感興趣的框架，並在雷達圖中直觀比較它們在不同維度上的表現。圖表將根據您的選擇動態更新。</p>
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <div class="chart-container">
+                        <canvas id="rcaFrameworkChart"></canvas>
+                    </div>
+                    <div id="chart-controls" class="mt-8 flex flex-wrap justify-center gap-3">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ecosystem" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h3 class="text-3xl font-bold text-slate-900">與製造生態系統的整合</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">為了實現全面的 RCA，LLM 系統需要與製造生態系統中的其他關鍵組件緊密整合，形成一個協同工作的智能網絡。將滑鼠懸停在下方圖示上以了解其協同作用。</p>
+                </div>
+                <div class="relative max-w-4xl mx-auto flex items-center justify-center h-96">
+                    <div class="absolute w-full h-px bg-slate-300"></div>
+                    <div class="absolute h-full w-px bg-slate-300"></div>
+                    
+                    <div class="absolute z-10 p-4 bg-cyan-600 text-white rounded-full flex items-center justify-center w-32 h-32 text-center shadow-2xl">
+                        <span class="font-bold">LLM-RCA 系統</span>
+                    </div>
+
+                    <div class="absolute top-0 left-0 has-tooltip">
+                        <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200 text-center">
+                            <span class="text-2xl">🔮</span>
+                            <p class="mt-1 text-sm font-semibold">預測性維護</p>
+                            <div class="tooltip absolute bottom-full mb-2 w-64 bg-slate-800 text-white text-xs rounded py-2 px-3 z-20">
+                                來自預測性維護的設備健康狀況洞察，能直接指出設備問題是否為品質缺陷的根本原因。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute top-0 right-0 has-tooltip">
+                        <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200 text-center">
+                            <span class="text-2xl">🔗</span>
+                            <p class="mt-1 text-sm font-semibold">供應鏈</p>
+                            <div class="tooltip absolute bottom-full mb-2 w-64 bg-slate-800 text-white text-xs rounded py-2 px-3 z-20">
+                                若缺陷追溯到原材料，LLM 分析的供應鏈數據（如供應商品質記錄）可為 RCA 提供關鍵線索。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute bottom-0 left-0 has-tooltip">
+                        <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200 text-center">
+                           <span class="text-2xl">🖥️</span>
+                           <p class="mt-1 text-sm font-semibold">數位雙生 (DT)</p>
+                           <div class="tooltip absolute top-full mt-2 w-64 bg-slate-800 text-white text-xs rounded py-2 px-3 z-20">
+                                DT 為 LLM 提供了「實時實驗室」，用於模擬和驗證關於根本原因的假設，實現從被動分析到主動調查的飛躍。
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute bottom-0 right-0 has-tooltip">
+                        <div class="bg-white p-4 rounded-lg shadow-md border border-slate-200 text-center">
+                           <span class="text-2xl">📈</span>
+                           <p class="mt-1 text-sm font-semibold">MES/SCADA</p>
+                           <div class="tooltip absolute top-full mt-2 w-64 bg-slate-800 text-white text-xs rounded py-2 px-3 z-20">
+                                LLM 可作為智能界面，讓工程師用自然語言查詢 MES/SCADA 中的海量數據，普及對複雜製造數據的訪問。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="py-16 md:py-24">
+             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-slate-900">挑戰與未來展望</h3>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">儘管潛力巨大，LLM 在製造業 RCA 的應用仍面臨挑戰。然而，未來的發展方向也同樣清晰，預示著一個更智能、更具協作性的品質管理新時代。</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-slate-200">
+                        <h4 class="text-2xl font-bold text-amber-600 mb-6">當前挑戰</h4>
+                        <ul class="space-y-4">
+                            <li class="flex"><span class="text-xl mr-4">🧠</span><div><strong class="text-slate-800">幻覺與事實性：</strong>LLM 可能產生不正確資訊，需透過知識庫等手段錨定事實。</div></li>
+                            <li class="flex"><span class="text-xl mr-4">💾</span><div><strong class="text-slate-800">數據品質與稀缺性：</strong>模型表現依賴高質量數據，但特定缺陷數據可能稀少。</div></li>
+                             <li class="flex"><span class="text-xl mr-4">🔒</span><div><strong class="text-slate-800">安全與隱私：</strong>製造數據高度敏感，需採用內部部署模型或強大的安全措施。</div></li>
+                             <li class="flex"><span class="text-xl mr-4">🧩</span><div><strong class="text-slate-800">系統整合：</strong>與傳統 MES/SCADA 等遺留系統的整合可能非常複雜。</div></li>
+                        </ul>
+                    </div>
+                     <div class="bg-white p-8 rounded-xl shadow-md border border-slate-200">
+                        <h4 class="text-2xl font-bold text-teal-600 mb-6">未來展望</h4>
+                        <ul class="space-y-4">
+                            <li class="flex"><span class="text-xl mr-4">🤝</span><div><strong class="text-slate-800">人機協作：</strong>發展「副駕駛」系統，增強人類專家能力，而非取代。</div></li>
+                            <li class="flex"><span class="text-xl mr-4">🤖</span><div><strong class="text-slate-800">混合 AI 系統：</strong>LLM 作為協調器，指揮專用工具、代理和知識圖譜。</div></li>
+                             <li class="flex"><span class="text-xl mr-4">🎯</span><div><strong class="text-slate-800">因果推斷：</strong>從分析相關性邁向發現真正的因果關係。</div></li>
+                             <li class="flex"><span class="text-xl mr-4">🔬</span><div><strong class="text-slate-800">領域特定 LLM：</strong>開發更小、高效、針對特定製造任務優化的模型。</div></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+            <p>此互動式報告根據《大型語言模型在製造業品質異常根本原因分析中的進展與應用 (2023-2025年)》報告生成。</p>
+            <p class="text-sm mt-2 text-slate-400">僅供演示與教育目的。</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const frameworkData = {
+                agent: [
+                    { id: 'tamo', name: 'TAMO', short: '工具輔助的 LLM 代理，處理多模態數據。', detail: 'TAMO 框架透過專用工具處理指標、日誌、追蹤等多模態觀測數據，將其統一並轉換為結構化文本，再交由 LLM 代理進行分析。這解決了 LLM 直接處理非文本數據的困難，並能應對動態變化的系統環境。' },
+                    { id: 'rcacopilot', name: 'RCACopilot', short: '自動化事件處理程序，LLM 預測根本原因。', detail: 'RCACopilot 是一個待命系統，工程師根據警報類型構建自動化工作流程 (事件處理程序) 來聚合診斷資訊。LLM 負責處理這些數據，預測根本原因類別，並提供解釋性敘述。其關鍵在於數據摘要和帶有相關歷史案例的 CoT 提示。' },
+                    { id: 'rcagent', name: 'RCAgent', short: '強調隱私的自主代理框架，使用內部模型。', detail: 'RCAgent 是一個工具增強的自主代理框架，其核心是一個「控制器」LLM 代理，負責調度各種「專家」分析工具（如日誌分析、代碼分析）。它強調使用內部部署模型以保護數據隱私，並透過 OBSK 等技術有效管理上下文長度。' },
+                    { id: 'flowofaction', name: 'Flow-of-Action', short: '整合 SOP 的多代理系統，減少幻覺。', detail: '此框架將標準作業程序 (SOP) 整合到知識庫中，指導一個多代理系統（包含 MainAgent, ActionAgent 等）進行 RCA。SOP 提供了結構化指導，有效減少了 LLM 的隨機性和幻覺，顯著提高了 RCA 的準確率。' },
+                    { id: 'jisrem', name: 'LLM for Auto RCA', short: '先分類再由微調 LLM 進行深度分析。', detail: '此方法先用傳統 NLP 分類器對異常進行初步分類，以縮小問題範圍。然後，使用經過微調的專用 LLM（如 CodeLlama）結合代碼庫上下文進行詳細的 RCA，準確率極高。' }
+                ],
+                knowledge: [
+                    { id: 'spkg', name: 'SPKG', short: '結合 5M1E 知識圖譜的瓶頸分析。', detail: 'SPKG 專為船舶製造瓶頸分析設計，它將製造過程（包括 5M1E 因素）構建成知識圖譜。LLM 不直接分析數據，而是透過生成 Cypher 查詢來與知識圖譜互動，從而找出瓶頸原因並提供可解釋的分析。' },
+                    { id: 'kgrag', name: 'KG-RAG for FMEA', short: '用知識圖譜增強 RAG，提升 FMEA 可靠性。', detail: '此框架旨在增強失效模式與影響分析 (FMEA)。它將 FMEA 數據結構化到知識圖譜中，並利用 RAG 架構讓 LLM 查詢此知識庫。這為 LLM 提供了事實基礎，減少幻覺，並使分析過程更可解釋。' }
+                ]
+            };
+            
+            const detailsPanel = document.getElementById('framework-details');
+            
+            function createCard(fw, container) {
+                const card = document.createElement('div');
+                card.className = 'framework-card bg-white p-6 rounded-lg shadow-md border border-slate-200 cursor-pointer';
+                card.innerHTML = `<h5 class="font-bold text-lg text-slate-800">${fw.name}</h5><p class="text-sm text-slate-600 mt-2">${fw.short}</p>`;
+                card.addEventListener('click', () => {
+                    detailsPanel.innerHTML = `<h5 class="font-bold text-lg text-slate-800 mb-2">${fw.name}</h5><p>${fw.detail}</p>`;
+                    document.querySelectorAll('.framework-card').forEach(c => c.classList.remove('ring-2', 'ring-cyan-500'));
+                    card.classList.add('ring-2', 'ring-cyan-500');
+                });
+                container.appendChild(card);
+            }
+
+            const agentContainer = document.querySelector('#content-agent .grid');
+            const knowledgeContainer = document.querySelector('#content-knowledge .grid');
+
+            frameworkData.agent.forEach(fw => createCard(fw, agentContainer));
+            frameworkData.knowledge.forEach(fw => createCard(fw, knowledgeContainer));
+
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.replace('active-tab', 'inactive-tab'));
+                    tab.classList.replace('inactive-tab', 'active-tab');
+                    contents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(tab.id.replace('tab', 'content')).classList.remove('hidden');
+                });
+            });
+
+
+            const chartData = {
+                labels: ['準確率/性能', '幻覺抑制', '領域知識整合', '上下文管理', '可解釋性', '自動化程度'],
+                datasets: [
+                    { id: 'tamo', label: 'TAMO', data: [4, 4, 3, 5, 3, 4], borderColor: 'rgba(255, 99, 132, 1)', backgroundColor: 'rgba(255, 99, 132, 0.2)', hidden: true },
+                    { id: 'rcacopilot', label: 'RCACopilot', data: [4, 4, 3, 4, 4, 4], borderColor: 'rgba(54, 162, 235, 1)', backgroundColor: 'rgba(54, 162, 235, 0.2)', hidden: true },
+                    { id: 'rcagent', label: 'RCAgent', data: [5, 4, 4, 5, 4, 5], borderColor: 'rgba(255, 206, 86, 1)', backgroundColor: 'rgba(255, 206, 86, 0.2)', hidden: true },
+                    { id: 'flowofaction', label: 'Flow-of-Action', data: [3, 5, 4, 3, 4, 4], borderColor: 'rgba(75, 192, 192, 1)', backgroundColor: 'rgba(75, 192, 192, 0.2)', hidden: true },
+                    { id: 'jisrem', label: 'LLM for Auto RCA', data: [5, 3, 5, 3, 3, 5], borderColor: 'rgba(153, 102, 255, 1)', backgroundColor: 'rgba(153, 102, 255, 0.2)', hidden: true },
+                    { id: 'spkg', label: 'SPKG', data: [3, 5, 5, 4, 5, 3], borderColor: 'rgba(255, 159, 64, 1)', backgroundColor: 'rgba(255, 159, 64, 0.2)', hidden: true },
+                    { id: 'kgrag', label: 'KG-RAG for FMEA', data: [4, 5, 5, 4, 5, 2], borderColor: 'rgba(99, 255, 132, 1)', backgroundColor: 'rgba(99, 255, 132, 0.2)', hidden: true }
+                ]
+            };
+            
+            const activeFrameworks = new Set(['rcagent', 'spkg']);
+
+            const ctx = document.getElementById('rcaFrameworkChart').getContext('2d');
+            const rcaChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 5,
+                            pointLabels: { font: { size: 14 } },
+                            ticks: { stepSize: 1, backdropColor: 'rgba(255, 255, 255, 0.75)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.r !== null) {
+                                        label += context.parsed.r;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const chartControlsContainer = document.getElementById('chart-controls');
+            
+            function updateChart() {
+                rcaChart.data.datasets = chartData.datasets.filter(d => activeFrameworks.has(d.id));
+                rcaChart.update();
+            }
+            
+            function updateButtons() {
+                 Array.from(chartControlsContainer.children).forEach(button => {
+                    if (button.dataset && activeFrameworks.has(button.dataset.id)) {
+                        button.classList.remove('bg-slate-200', 'text-slate-700');
+                        button.classList.add('bg-cyan-600', 'text-white', 'ring-2', 'ring-cyan-300');
+                    } else {
+                        button.classList.add('bg-slate-200', 'text-slate-700');
+                        button.classList.remove('bg-cyan-600', 'text-white', 'ring-2', 'ring-cyan-300');
+                    }
+                });
+            }
+
+            chartData.datasets.forEach(dataset => {
+                const button = document.createElement('button');
+                button.textContent = dataset.label;
+                button.dataset.id = dataset.id;
+                button.className = 'px-4 py-2 rounded-full text-sm font-medium transition-all duration-200';
+                button.addEventListener('click', () => {
+                    if (activeFrameworks.has(dataset.id)) {
+                        activeFrameworks.delete(dataset.id);
+                    } else {
+                        activeFrameworks.add(dataset.id);
+                    }
+                    updateChart();
+                    updateButtons();
+                });
+                chartControlsContainer.appendChild(button);
+            });
+            
+            updateChart();
+            updateButtons();
+        });
+    </script>
+</body>
+</html>
